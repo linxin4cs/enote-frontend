@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
 export const AdminLayout = () => import("@/layout/AdminLayout.vue");
-export const AuthView = () => import("@/components/Auth/AuthView.vue");
+export const AuthView = () => import("@/views/AuthView.vue");
 export const LoginBlock = () => import("@/components/Auth/LoginBlock.vue");
 export const RegisterBlock = () =>
 	import("@/components/Auth/RegisterBlock.vue");
@@ -28,42 +28,116 @@ export const constantRoutes = [
 				meta: {
 					title: "AdminDashboardView",
 				},
-				children: [],
+			},
+			{
+				path: "management",
+				name: "AdminManagement",
+				redirect: "/admin/management/user",
+				meta: {
+					title: "AdminManagement",
+				},
+				children: [
+					{
+						path: "user",
+						name: "AdminUserManagementView",
+						component: () =>
+							import("@/views/admin/management/AdminUserManagementView.vue"),
+						meta: {
+							title: "AdminUserManagementView",
+						},
+					},
+				],
+			},
+			{
+				path: "maintenance",
+				name: "AdminMaintenanceView",
+				component: () => import("@/views/admin/AdminMaintenanceView.vue"),
+				meta: {
+					title: "AdminMaintenanceView",
+				},
 			},
 		],
 	},
 	{
 		path: "/admin/auth",
-		name: "AuthView",
+		name: "AdminAuthView",
 		component: AuthView,
 		meta: {
-			title: "AuthView",
+			title: "AdminAuthView",
 			hidden: true,
 		},
 		redirect: "/admin/auth/login",
 		children: [
 			{
 				path: "login",
-				name: "LoginBlock",
+				name: "AdminLoginBlock",
 				component: LoginBlock,
 				meta: {
-					title: "LoginBlock",
+					title: "AdminLoginBlock",
 					hidden: true,
 				},
 				props: {
-					mode: "admin",
+					pageMode: "admin",
 				},
 			},
 			{
 				path: "forget",
-				name: "ForgetBlock",
+				name: "AdminForgetBlock",
 				component: ForgetBlock,
 				meta: {
-					title: "ForgetBlock",
+					title: "AdminForgetBlock",
 					hidden: true,
 				},
 				props: {
-					mode: "admin",
+					pageMode: "admin",
+				},
+			},
+		],
+	},
+	{
+		path: "/auth",
+		name: "UserAuthView",
+		component: AuthView,
+		meta: {
+			title: "UserAuthView",
+			hidden: true,
+		},
+		redirect: "/auth/login",
+		children: [
+			{
+				path: "login",
+				name: "UserLoginBlock",
+				component: LoginBlock,
+				meta: {
+					title: "UserLoginBlock",
+					hidden: true,
+				},
+				props: {
+					pageMode: "user",
+				},
+			},
+			{
+				path: "register",
+				name: "UserRegisterBlock",
+				component: RegisterBlock,
+				meta: {
+					title: "UserRegisterBlock",
+					hidden: true,
+				},
+				props: {
+					pageMode: "user",
+				},
+			},
+			{
+				path: "forget",
+				name: "UserForgetBlock",
+				component: ForgetBlock,
+				meta: {
+					title: "UserForgetBlock",
+					hidden: true,
+				},
+				props: {
+					pageMode: "user",
 				},
 			},
 		],

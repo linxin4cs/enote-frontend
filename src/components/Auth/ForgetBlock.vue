@@ -3,6 +3,9 @@ import { reactive, ref } from "vue";
 import { EditPen, Message, Lock } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 
+const props = defineProps(["pageMode"]);
+const pageMode = props.pageMode;
+
 const active = ref(0);
 const isEmailValid = ref(false);
 const coldDownTime = ref(0);
@@ -152,7 +155,9 @@ const doReset = () => {
 				<el-divider>
 					<span class="text-gray-400 text-xs">点错了？</span>
 				</el-divider>
-				<router-link to="/admin/auth/login">
+				<router-link
+					:to="pageMode === 'admin' ? '/admin/auth/login' : '/auth/login'"
+				>
 					<el-button class="w-28" color="#67c23aff" plain>去登录 </el-button>
 				</router-link>
 			</div>
@@ -205,7 +210,9 @@ const doReset = () => {
 				<el-divider>
 					<span class="text-gray-400 text-xs">点错了？</span>
 				</el-divider>
-				<router-link to="/admin/auth/login">
+				<router-link
+					:to="pageMode === 'admin' ? '/admin/auth/login' : '/auth/login'"
+				>
 					<el-button class="w-28" color="#67c23aff" plain>去登录 </el-button>
 				</router-link>
 			</div>

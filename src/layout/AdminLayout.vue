@@ -92,7 +92,7 @@ const handleClose = (key, keyPath) => {
 					</el-menu></el-scrollbar
 				></el-aside
 			>
-			<el-main class="bg-white">
+			<el-main class="reset-padding">
 				<RouterView />
 			</el-main>
 		</el-container>
@@ -102,5 +102,8 @@ const handleClose = (key, keyPath) => {
 <style scoped>
 .clear-border {
 	border: none;
+}
+.reset-padding {
+	padding: 0.9rem;
 }
 </style>

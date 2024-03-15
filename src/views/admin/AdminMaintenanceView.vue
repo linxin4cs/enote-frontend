@@ -1,5 +1,5 @@
 <script setup></script>
 
-<template>Dashboard</template>
+<template>SystemMaintenance</template>
 
 <style scoped></style>

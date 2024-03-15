@@ -18,7 +18,7 @@
 .bg-image {
 	background-image: url("@/assets/images/admin_login_bg.svg");
 	background-repeat: no-repeat;
-	background-size: contain;
+	background-size: cover;
 	background-position: center;
 }
 @media screen and (min-width: 1024px) {

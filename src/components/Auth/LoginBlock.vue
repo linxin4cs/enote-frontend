@@ -2,9 +2,9 @@
 import { Lock, User } from "@element-plus/icons-vue";
 import { reactive } from "vue";
 import { ElMessage } from "element-plus";
-import router from "@/router";
 
-const props = defineProps(["mode"]);
+const props = defineProps(["pageMode"]);
+const pageMode = props.pageMode;
 
 const form = reactive({
 	username: "",
@@ -27,7 +27,7 @@ const login = () => {
 			<RouterLink to="/">ENote</RouterLink> 后台管理
 		</h2>
 		<!--		<div>测试内容</div>-->
-		<div class="w-72 mt-2">
+		<div class="w-72 mb-2">
 			<el-input v-model="form.username" type="text" placeholder="邮箱">
 				<template #prefix>
 					<el-icon>
@@ -36,7 +36,7 @@ const login = () => {
 				</template>
 			</el-input>
 		</div>
-		<div class="w-72 mt-2">
+		<div class="w-72">
 			<el-input v-model="form.password" type="password" placeholder="密码">
 				<template #prefix>
 					<el-icon>
@@ -48,28 +48,23 @@ const login = () => {
 
 		<div class="m-2 w-72 mx-auto flex items-center justify-between">
 			<el-checkbox v-model="form.remember" label="记住我" />
-			<router-link to="/admin/auth/forget" class="flex">
+			<router-link
+				:to="pageMode === 'admin' ? '/admin/auth/forget' : '/auth/forget'"
+				class="flex"
+			>
 				<el-link>忘记密码?</el-link>
 			</router-link>
 		</div>
 		<el-button @click="login" class="w-24" color="#67c23aff" plain>
 			登录
 		</el-button>
-		<div v-if="props.mode === 'admin'" class="flex flex-col items-center">
+		<div v-if="pageMode === 'user'" class="flex flex-col items-center">
 			<el-divider>
 				<span class="text-xs text-gray-400">没有账号？</span>
 			</el-divider>
-			<el-button
-				@click="
-					(evt) => {
-						router.push('/admin/auth/register');
-					}
-				"
-				class="w-24"
-				color="#e6a23cff"
-				plain
-				>注册账号
-			</el-button>
+			<RouterLink to="/auth/register">
+				<el-button class="w-24" color="#e6a23cff" plain>注册账号 </el-button>
+			</RouterLink>
 		</div>
 	</div>
 </template>

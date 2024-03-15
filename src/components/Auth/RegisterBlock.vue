@@ -98,124 +98,105 @@ const validateEmail = () => {};
 </script>
 
 <template>
-	<div style="margin: 20px; text-align: center">
-		<div style="margin-top: 150px">
-			<div style="font-size: 25px">注册</div>
-			<div style="font-size: 14px; color: grey">
-				欢迎注册我们的学习平台，请在下方填写相关信息
-			</div>
-			<div style="margin-top: 50px">
-				<el-form
-					:model="form"
-					:rules="rules"
-					@validate="onValidate"
-					ref="formRef"
+	<div>
+		<h2 class="mb-6 text-2xl text-[#2a9a5b]">注册</h2>
+		<el-form
+			:model="form"
+			:rules="rules"
+			@validate="onValidate"
+			ref="formRef"
+			class="w-72"
+		>
+			<el-form-item prop="username">
+				<el-input
+					v-model="form.username"
+					:maxlength="8"
+					placeholder="用户名"
+					type="text"
 				>
-					<el-form-item prop="username">
+					<template #prefix>
+						<el-icon>
+							<User />
+						</el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="password">
+				<el-input
+					:maxlength="16"
+					v-model="form.password"
+					placeholder="密码"
+					type="password"
+				>
+					<template #prefix>
+						<el-icon>
+							<Lock />
+						</el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="passwordAgain">
+				<el-input
+					maxlength="16"
+					v-model="form.passwordAgain"
+					placeholder="重复密码"
+					type="password"
+				>
+					<template #prefix>
+						<el-icon>
+							<Lock />
+						</el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="email">
+				<el-input v-model="form.email" placeholder="邮箱" type="text">
+					<template #prefix>
+						<el-icon>
+							<Message />
+						</el-icon>
+					</template>
+				</el-input>
+			</el-form-item>
+			<el-form-item prop="code">
+				<el-row :gutter="10">
+					<el-col :span="17">
 						<el-input
-							v-model="form.username"
-							:maxlength="8"
-							placeholder="用户名"
+							maxlength="6"
+							v-model="form.code"
+							placeholder="验证码"
 							type="text"
 						>
 							<template #prefix>
 								<el-icon>
-									<User />
+									<EditPen />
 								</el-icon>
 							</template>
 						</el-input>
-					</el-form-item>
-					<el-form-item prop="password">
-						<el-input
-							:maxlength="16"
-							v-model="form.password"
-							placeholder="密码"
-							type="password"
-						>
-							<template #prefix>
-								<el-icon>
-									<Lock />
-								</el-icon>
-							</template>
-						</el-input>
-					</el-form-item>
-					<el-form-item prop="passwordAgain">
-						<el-input
-							maxlength="16"
-							v-model="form.passwordAgain"
-							placeholder="重复密码"
-							type="password"
-						>
-							<template #prefix>
-								<el-icon>
-									<Lock />
-								</el-icon>
-							</template>
-						</el-input>
-					</el-form-item>
-					<el-form-item prop="email">
-						<el-input
-							v-model="form.email"
-							placeholder="请输入邮箱"
-							type="email"
-						>
-							<template #prefix>
-								<el-icon>
-									<Message />
-								</el-icon>
-							</template>
-						</el-input>
-					</el-form-item>
-					<el-form-item prop="code">
-						<el-row :gutter="10">
-							<el-col :span="17">
-								<el-input
-									maxlength="6"
-									v-model="form.code"
-									placeholder="请输入验证码"
-									type="text"
-								>
-									<template #prefix>
-										<el-icon>
-											<EditPen />
-										</el-icon>
-									</template>
-								</el-input>
-							</el-col>
-							<el-col :span="5">
-								<el-button
-									@click="validateEmail"
-									style=""
-									type="success"
-									:disabled="!isEmailValid || coldDownTime > 0"
-									>{{
-										coldDownTime > 0
-											? "请稍后 " + coldDownTime + "秒"
-											: "获取验证码"
-									}}
-								</el-button>
-							</el-col>
-						</el-row>
-					</el-form-item>
-				</el-form>
-			</div>
-		</div>
-		<div>
-			<el-button
-				@click="register"
-				style="width: 270px; margin-top: 60px"
-				type="warning"
-				plain
-				>立即注册
-			</el-button>
-		</div>
-		<div style="font-size: 14px; line-height: 15px; margin-top: 20px">
-			<span style="color: grey">已有账号？</span>
-			<router-link to="/">
-				<el-link type="primary">立即登录</el-link>
-			</router-link>
-		</div>
+					</el-col>
+					<el-col :span="5">
+						<el-button
+							@click="validateEmail"
+							color="#67c23aff"
+							:disabled="!isEmailValid || coldDownTime > 0"
+							>{{
+								coldDownTime > 0
+									? "请稍后 " + coldDownTime + "秒"
+									: "获取验证码"
+							}}
+						</el-button>
+					</el-col>
+				</el-row>
+			</el-form-item>
+		</el-form>
+		<el-button @click="register" color="#e6a23cff" plain class="w-24"
+			>立即注册
+		</el-button>
+		<el-divider>
+			<span class="text-gray-400 text-xs">已有账号？</span>
+		</el-divider>
+		<router-link to="/auth/login">
+			<el-button class="w-24" color="#67c23aff" plain>去登录 </el-button>
+		</router-link>
 	</div>
 </template>
-
-<style scoped></style>
