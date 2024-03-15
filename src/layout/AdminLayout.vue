@@ -36,7 +36,10 @@ onMounted(() => {
 				</div>
 				<template #dropdown>
 					<el-dropdown-menu>
-						<el-dropdown-item>退出登录</el-dropdown-item>
+						<router-link to="/admin/userinfo">
+							<el-dropdown-item>个人中心</el-dropdown-item>
+						</router-link>
+						<el-dropdown-item divided>退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
