@@ -19,12 +19,10 @@ const login = () => {
 		/* empty */
 	}
 };
-
-console.log(props.mode);
 </script>
 
 <template>
-	<div class="text-center">
+	<div>
 		<h2 class="mb-6 text-2xl text-[#2a9a5b]">ENote 后台管理</h2>
 		<!--		<div>测试内容</div>-->
 		<div class="w-72 mt-2">
@@ -46,13 +44,13 @@ console.log(props.mode);
 			</el-input>
 		</div>
 
-		<div class="m-2 max-w-60 mx-auto flex items-center justify-between">
+		<div class="m-2 w-72 mx-auto flex items-center justify-between">
 			<el-checkbox v-model="form.remember" label="记住我" />
-			<router-link to="/auth/forget" class="flex">
+			<router-link to="/admin/auth/forget" class="flex">
 				<el-link>忘记密码?</el-link>
 			</router-link>
 		</div>
-		<el-button @click="login" class="w-24" type="success" plain>
+		<el-button @click="login" class="w-24" color="#67c23aff" plain>
 			登录
 		</el-button>
 		<div v-if="props.mode === 'admin'" class="flex flex-col items-center">
@@ -66,12 +64,10 @@ console.log(props.mode);
 					}
 				"
 				class="w-24"
-				type="warning"
+				color="#e6a23cff"
 				plain
 				>注册账号
 			</el-button>
 		</div>
 	</div>
 </template>
-
-<style scoped></style>

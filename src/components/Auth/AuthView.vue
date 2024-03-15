@@ -2,9 +2,9 @@
 
 <template>
 	<div
-		class="bg-image flex justify-center lg:justify-end items-center h-screen lg:pr-32"
+		class="bg-image flex justify-center lg:justify-end items-center h-screen lg:pr-32 text-center"
 	>
-		<div class="border-2 flex rounded-lg p-6 shadow-lg bg-white">
+		<div class="border-2 flex rounded-lg p-10 shadow-lg bg-white">
 			<router-view v-slot="{ Component }">
 				<transition name="el-fade-in-linear" mode="out-in">
 					<component :is="Component" />

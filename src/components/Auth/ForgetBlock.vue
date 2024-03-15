@@ -2,7 +2,6 @@
 import { reactive, ref } from "vue";
 import { EditPen, Message, Lock } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import router from "@/router";
 
 const active = ref(0);
 const isEmailValid = ref(false);
@@ -93,175 +92,123 @@ const doReset = () => {
 
 <template>
 	<div>
-		<div style="margin: 30px 20px">
-			<el-steps :active="active" finish-status="success" align-center>
-				<el-step title="验证电子邮件" />
-				<el-step title="重新设定密码" />
-			</el-steps>
-		</div>
+		<el-steps :active="active" finish-status="success" align-center>
+			<el-step title="验证电子邮件" />
+			<el-step title="重新设定密码" />
+		</el-steps>
 		<transition name="el-fade-in-linear" mode="out-in">
-			<div
-				style="margin: 20px; text-align: center; height: 100%"
-				v-if="active === 0"
-			>
-				<div style="margin-top: 80px; height: 100%">
-					<div style="font-size: 25px">重置密码</div>
-					<div style="font-size: 14px; color: grey">
-						请输入需要重置密码的电子邮件
-					</div>
-					<div style="margin-top: 50px">
-						<el-form
-							:model="form"
-							:rules="rules"
-							@validate="onValidate"
-							ref="formRef1"
-						>
-							<el-form-item prop="email">
+			<div v-if="active === 0">
+				<div class="mt-2 mb-6 text-2xl">重置密码</div>
+				<el-form
+					:model="form"
+					:rules="rules"
+					@validate="onValidate"
+					ref="formRef1"
+					class="w-72"
+				>
+					<el-form-item prop="email">
+						<el-input v-model="form.email" placeholder="邮箱" type="text">
+							<template #prefix>
+								<el-icon>
+									<Message />
+								</el-icon>
+							</template>
+						</el-input>
+					</el-form-item>
+					<el-form-item prop="code">
+						<el-row :gutter="10">
+							<el-col :span="17">
 								<el-input
-									v-model="form.email"
-									placeholder="请输入邮箱"
-									type="email"
+									maxlength="6"
+									v-model="form.code"
+									placeholder="验证码"
+									type="text"
 								>
 									<template #prefix>
 										<el-icon>
-											<Message />
+											<EditPen />
 										</el-icon>
 									</template>
 								</el-input>
-							</el-form-item>
-							<el-form-item prop="code">
-								<el-row :gutter="10">
-									<el-col :span="17">
-										<el-input
-											maxlength="6"
-											v-model="form.code"
-											placeholder="请输入验证码"
-											type="text"
-										>
-											<template #prefix>
-												<el-icon>
-													<EditPen />
-												</el-icon>
-											</template>
-										</el-input>
-									</el-col>
-									<el-col :span="5">
-										<el-button
-											@click="validateEmail"
-											style=""
-											type="success"
-											:disabled="!isEmailValid || coldDownTime > 0"
-											>{{
-												coldDownTime > 0
-													? "请稍后 " + coldDownTime + "秒"
-													: "获取验证码"
-											}}
-										</el-button>
-									</el-col>
-								</el-row>
-							</el-form-item>
-						</el-form>
-					</div>
-					<div style="margin-top: 70px">
-						<el-button
-							@click="startReset"
-							style="width: 270px"
-							type="danger"
-							plain
-							>开始重置密码
-						</el-button>
-					</div>
-					<el-divider>
-						<span style="color: grey; font-size: 13px">点错了？</span>
-					</el-divider>
-					<div>
-						<el-button
-							@click="
-								(evt) => {
-									router.push('/auth');
-								}
-							"
-							style="width: 270px"
-							type="success"
-							plain
-							>去登录
-						</el-button>
-					</div>
-				</div>
+							</el-col>
+							<el-col :span="5">
+								<el-button
+									@click="validateEmail"
+									color="#67c23aff"
+									:disabled="!isEmailValid || coldDownTime > 0"
+									>{{
+										coldDownTime > 0
+											? "请稍后 " + coldDownTime + "秒"
+											: "获取验证码"
+									}}
+								</el-button>
+							</el-col>
+						</el-row>
+					</el-form-item>
+				</el-form>
+				<el-button @click="startReset" class="w-28" color="#f56c6cff" plain
+					>开始重置密码
+				</el-button>
+				<el-divider>
+					<span class="text-gray-400 text-xs">点错了？</span>
+				</el-divider>
+				<router-link to="/admin/auth/login">
+					<el-button class="w-28" color="#67c23aff" plain>去登录 </el-button>
+				</router-link>
 			</div>
 		</transition>
 		<transition name="el-fade-in-linear" mode="out-in">
-			<div
-				style="margin: 20px; text-align: center; height: 100%"
-				v-if="active === 1"
-			>
-				<div style="margin-top: 80px">
-					<div style="font-size: 25px">重置密码</div>
-					<div style="font-size: 14px; color: grey">
-						请填写您的新密码，务必牢记，防止丢失
-					</div>
+			<div v-if="active === 1">
+				<div class="mt-2 mb-1 text-2xl">重置密码</div>
+				<div class="text-sm text-gray-400 mb-6">
+					请填写您的新密码，务必牢记，防止丢失
 				</div>
-				<div style="margin-top: 50px">
-					<el-form
-						:model="form"
-						:rules="rules"
-						@validate="onValidate"
-						ref="formRef2"
-					>
-						<el-form-item prop="password">
-							<el-input
-								:maxlength="16"
-								v-model="form.password"
-								placeholder="密码"
-								type="password"
-							>
-								<template #prefix>
-									<el-icon>
-										<Lock />
-									</el-icon>
-								</template>
-							</el-input>
-						</el-form-item>
-						<el-form-item prop="passwordAgain">
-							<el-input
-								maxlength="16"
-								v-model="form.passwordAgain"
-								placeholder="重复密码"
-								type="password"
-							>
-								<template #prefix>
-									<el-icon>
-										<Lock />
-									</el-icon>
-								</template>
-							</el-input>
-						</el-form-item>
-					</el-form>
-				</div>
-				<div style="margin-top: 70px">
-					<el-button @click="doReset" style="width: 270px" type="danger" plain
-						>立即重置密码
-					</el-button>
-				</div>
+				<el-form
+					:model="form"
+					:rules="rules"
+					@validate="onValidate"
+					class="w-72"
+					ref="formRef2"
+				>
+					<el-form-item prop="password">
+						<el-input
+							:maxlength="16"
+							v-model="form.password"
+							placeholder="密码"
+							type="password"
+						>
+							<template #prefix>
+								<el-icon>
+									<Lock />
+								</el-icon>
+							</template>
+						</el-input>
+					</el-form-item>
+					<el-form-item prop="passwordAgain">
+						<el-input
+							maxlength="16"
+							v-model="form.passwordAgain"
+							placeholder="重复密码"
+							type="password"
+						>
+							<template #prefix>
+								<el-icon>
+									<Lock />
+								</el-icon>
+							</template>
+						</el-input>
+					</el-form-item>
+				</el-form>
+				<el-button @click="doReset" class="w-28" type="danger" plain
+					>立即重置密码
+				</el-button>
 				<el-divider>
-					<span style="color: grey; font-size: 13px">点错了？</span>
+					<span class="text-gray-400 text-xs">点错了？</span>
 				</el-divider>
-				<div>
-					<el-button
-						@click="
-							(evt) => {
-								router.push('/auth');
-							}
-						"
-						style="width: 270px"
-						type="success"
-						plain
-						>去登录
-					</el-button>
-				</div>
+				<router-link to="/admin/auth/login">
+					<el-button class="w-28" color="#67c23aff" plain>去登录 </el-button>
+				</router-link>
 			</div>
 		</transition>
 	</div>
 </template>
-
-<style scoped></style>
