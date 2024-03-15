@@ -13,6 +13,17 @@ export const constantRoutes = [
 		path: "/",
 		meta: { hidden: true },
 		redirect: "/admin",
+		children: [
+			{
+				path: "userinfo",
+				name: "UserInfoView",
+				component: () => import("@/views/UserInfoView.vue"),
+				meta: {
+					title: "UserInfoView",
+					hidden: true,
+				},
+			},
+		],
 	},
 	{
 		// TODO 随机生成路径，防止被爬虫爬取
@@ -39,21 +50,43 @@ export const constantRoutes = [
 				children: [
 					{
 						path: "user",
-						name: "AdminUserManagementView",
+						name: "AdminManagementUserView",
 						component: () =>
-							import("@/views/admin/management/AdminUserManagementView.vue"),
+							import("@/views/admin/management/AdminManagementUserView.vue"),
 						meta: {
-							title: "AdminUserManagementView",
+							title: "AdminManagementUserView",
 						},
 					},
 				],
 			},
 			{
 				path: "maintenance",
-				name: "AdminMaintenanceView",
-				component: () => import("@/views/admin/AdminMaintenanceView.vue"),
+				name: "AdminMaintenance",
+				redirect: "/admin/maintenance/backup",
 				meta: {
-					title: "AdminMaintenanceView",
+					title: "AdminMaintenance",
+				},
+				children: [
+					{
+						path: "backup",
+						name: "AdminMaintenanceBackupView",
+						component: () =>
+							import(
+								"@/views/admin/maintenance/AdminMaintenanceBackupView.vue"
+							),
+						meta: {
+							title: "AdminMaintenanceBackupView",
+						},
+					},
+				],
+			},
+			{
+				path: "userinfo",
+				name: "AdminInfoView",
+				component: () => import("@/views/UserInfoView.vue"),
+				meta: {
+					title: "AdminInfoView",
+					hidden: true,
 				},
 			},
 		],

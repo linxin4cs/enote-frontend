@@ -1,21 +1,24 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import {
-	Document,
-	Menu as IconMenu,
-	Location,
+	EditPen,
+	PieChart,
 	Setting,
 	Expand,
 	Fold,
+	User,
+	Monitor,
+	CopyDocument,
 } from "@element-plus/icons-vue";
+import router from "@/router";
 
 const isCollapse = ref(true);
-const handleOpen = (key, keyPath) => {
-	console.log(key, keyPath);
-};
-const handleClose = (key, keyPath) => {
-	console.log(key, keyPath);
-};
+
+onMounted(() => {
+	if (window.innerWidth > 1024) {
+		isCollapse.value = false;
+	}
+});
 </script>
 
 <template>
@@ -45,11 +48,10 @@ const handleClose = (key, keyPath) => {
 			>
 				<el-scrollbar>
 					<el-menu
-						default-active="2"
 						class="clear-border"
 						:collapse="isCollapse"
-						@open="handleOpen"
-						@close="handleClose"
+						:default-active="router.currentRoute.value.name.toString()"
+						router
 					>
 						<el-menu-item v-if="isCollapse" @click="isCollapse = false">
 							<el-icon><Expand /></el-icon>
@@ -59,36 +61,39 @@ const handleClose = (key, keyPath) => {
 							<el-icon><Fold /></el-icon>
 							<template #title>折叠</template>
 						</el-menu-item>
-						<el-sub-menu index="1">
+						<el-menu-item
+							index="AdminDashboardView"
+							@click="router.push('/admin/dashboard')"
+						>
+							<el-icon><PieChart /></el-icon>
+							<span>仪表盘</span>
+						</el-menu-item>
+						<el-sub-menu index="AdminManagement">
 							<template #title>
-								<el-icon><location /></el-icon>
-								<span>Navigator One</span>
+								<el-icon><EditPen /></el-icon>
+								<span>管理</span>
 							</template>
-							<el-menu-item-group>
-								<template #title><span>Group One</span></template>
-								<el-menu-item index="1-1">item one</el-menu-item>
-								<el-menu-item index="1-2">item two</el-menu-item>
-							</el-menu-item-group>
-							<el-menu-item-group title="Group Two">
-								<el-menu-item index="1-3">item three</el-menu-item>
-							</el-menu-item-group>
-							<el-sub-menu index="1-4">
-								<template #title><span>item four</span></template>
-								<el-menu-item index="1-4-1">item one</el-menu-item>
-							</el-sub-menu>
+							<el-menu-item
+								index="AdminManagementUserView"
+								@click="router.push('/admin/management/user')"
+							>
+								<el-icon><User /></el-icon>
+								<span>用户</span>
+							</el-menu-item>
 						</el-sub-menu>
-						<el-menu-item index="2">
-							<el-icon><icon-menu /></el-icon>
-							<template #title>Navigator Two</template>
-						</el-menu-item>
-						<el-menu-item index="3" disabled>
-							<el-icon><document /></el-icon>
-							<template #title>Navigator Three</template>
-						</el-menu-item>
-						<el-menu-item index="4">
-							<el-icon><setting /></el-icon>
-							<template #title>Navigator Four</template>
-						</el-menu-item>
+						<el-sub-menu index="AdminMaintenance">
+							<template #title>
+								<el-icon><Monitor /></el-icon>
+								<span>维护</span>
+							</template>
+							<el-menu-item
+								index="AdminMaintenanceBackupView"
+								@click="router.push('/admin/maintenance/backup')"
+							>
+								<el-icon><CopyDocument /></el-icon>
+								<span>备份 & 恢复</span>
+							</el-menu-item>
+						</el-sub-menu>
 					</el-menu></el-scrollbar
 				></el-aside
 			>
