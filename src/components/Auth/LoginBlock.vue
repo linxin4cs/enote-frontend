@@ -25,9 +25,9 @@ console.log(props.mode);
 
 <template>
 	<div class="text-center">
-		<h2 class="mb-6 text-2xl">登录</h2>
+		<h2 class="mb-6 text-2xl">ENote 后台管理</h2>
 		<!--		<div>测试内容</div>-->
-		<div class="w-70 mt-2">
+		<div class="w-72 mt-2">
 			<el-input v-model="form.username" type="text" placeholder="邮箱">
 				<template #prefix>
 					<el-icon>
@@ -36,7 +36,7 @@ console.log(props.mode);
 				</template>
 			</el-input>
 		</div>
-		<div class="w-70 mt-2">
+		<div class="w-72 mt-2">
 			<el-input v-model="form.password" type="password" placeholder="密码">
 				<template #prefix>
 					<el-icon>
@@ -52,7 +52,7 @@ console.log(props.mode);
 				<el-link>忘记密码?</el-link>
 			</router-link>
 		</div>
-		<el-button @click="login" class="w-20" type="success" plain>
+		<el-button @click="login" class="w-24" type="success" plain>
 			登录
 		</el-button>
 		<div v-if="props.mode === 'admin'" class="flex flex-col items-center">
@@ -65,7 +65,7 @@ console.log(props.mode);
 						router.push('/admin/auth/register');
 					}
 				"
-				class="w-20"
+				class="w-24"
 				type="warning"
 				plain
 				>注册账号
