@@ -24,7 +24,7 @@ export const constantRoutes = [
 			{
 				path: "dashboard",
 				name: "AdminDashboardView",
-				component: () => import("@/views/Admin/AdminDashboardView.vue"),
+				component: () => import("@/views/admin/AdminDashboardView.vue"),
 				meta: {
 					title: "AdminDashboardView",
 				},
@@ -68,6 +68,23 @@ export const constantRoutes = [
 			},
 		],
 	},
+	{
+		path: "/401",
+		component: () => import("@/views/error/401View.vue"),
+		meta: { hidden: true },
+		props: {
+			message: "站长说你不能进入这个页面...",
+		},
+	},
+	{
+		path: "/404",
+		component: () => import("@/views/error/404View.vue"),
+		meta: { hidden: true },
+		props: {
+			message: "页面不存在...",
+		},
+	},
+	{ path: "/:pathMatch(.*)", redirect: "/404", meta: { hidden: true } },
 
 	// {
 	// 	path: "/",
@@ -90,12 +107,12 @@ export const constantRoutes = [
 	// 		},
 	// 		{
 	// 			path: "401",
-	// 			component: () => import("@/views/error-page/401.vue"),
+	// 			component: () => import("@/views/error-page/401View.vue"),
 	// 			meta: { hidden: true },
 	// 		},
 	// 		{
 	// 			path: "404",
-	// 			component: () => import("@/views/error-page/404.vue"),
+	// 			component: () => import("@/views/error-page/404View.vue"),
 	// 			meta: { hidden: true },
 	// 		},
 	// 	],
