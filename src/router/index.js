@@ -30,41 +30,41 @@ export const constantRoutes = [
 				},
 				children: [],
 			},
+		],
+	},
+	{
+		path: "/admin/auth",
+		name: "AuthView",
+		component: AuthView,
+		meta: {
+			title: "AuthView",
+			hidden: true,
+		},
+		redirect: "/admin/auth/login",
+		children: [
 			{
-				path: "auth",
-				name: "AuthView",
-				component: AuthView,
+				path: "login",
+				name: "LoginBlock",
+				component: LoginBlock,
 				meta: {
-					title: "AuthView",
+					title: "LoginBlock",
 					hidden: true,
 				},
-				redirect: "/admin/auth/login",
-				children: [
-					{
-						path: "login",
-						name: "LoginBlock",
-						component: LoginBlock,
-						meta: {
-							title: "LoginBlock",
-							hidden: true,
-						},
-						props: {
-							mode: "admin",
-						},
-					},
-					{
-						path: "forget",
-						name: "ForgetBlock",
-						component: ForgetBlock,
-						meta: {
-							title: "ForgetBlock",
-							hidden: true,
-						},
-						props: {
-							mode: "admin",
-						},
-					},
-				],
+				props: {
+					mode: "admin",
+				},
+			},
+			{
+				path: "forget",
+				name: "ForgetBlock",
+				component: ForgetBlock,
+				meta: {
+					title: "ForgetBlock",
+					hidden: true,
+				},
+				props: {
+					mode: "admin",
+				},
 			},
 		],
 	},

@@ -23,7 +23,9 @@ const login = () => {
 
 <template>
 	<div>
-		<h2 class="mb-6 text-2xl text-[#2a9a5b]">ENote 后台管理</h2>
+		<h2 class="mb-6 text-2xl text-[#2a9a5b]">
+			<RouterLink to="/">ENote</RouterLink> 后台管理
+		</h2>
 		<!--		<div>测试内容</div>-->
 		<div class="w-72 mt-2">
 			<el-input v-model="form.username" type="text" placeholder="邮箱">
