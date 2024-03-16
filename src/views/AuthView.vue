@@ -16,7 +16,7 @@
 
 <style scoped>
 .bg-image {
-	background-image: url("@/assets/images/admin_login_bg.svg");
+	background-image: url('@/assets/admin_login_bg.svg');
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;

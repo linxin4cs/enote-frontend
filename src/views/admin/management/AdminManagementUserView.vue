@@ -1,5 +1,5 @@
 <script setup></script>
 
-<template>Management</template>
+<template>User Management</template>
 
 <style scoped></style>

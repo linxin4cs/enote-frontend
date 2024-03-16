@@ -78,6 +78,17 @@ export const constantRoutes = [
 							title: "AdminMaintenanceBackupView",
 						},
 					},
+					{
+						path: "restore",
+						name: "AdminMaintenanceRestoreView",
+						component: () =>
+							import(
+								"@/views/admin/maintenance/AdminMaintenanceRestoreView.vue"
+							),
+						meta: {
+							title: "AdminMaintenanceRestoreView",
+						},
+					},
 				],
 			},
 			{

@@ -1,5 +1,5 @@
 <script setup></script>
 
-<template>备份</template>
+<template>恢复</template>
 
 <style scoped></style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, h, watch } from 'vue'
 import {
 	EditPen,
 	PieChart,
@@ -9,26 +9,89 @@ import {
 	User,
 	Monitor,
 	CopyDocument,
-} from "@element-plus/icons-vue";
-import router from "@/router";
+	DocumentCopy
+} from '@element-plus/icons-vue'
+import router from '@/router'
+import { useRoute } from 'vue-router'
 
-const isCollapse = ref(true);
+const PAGES = {
+	AdminDashboardView: [
+		{
+			title: '仪表盘',
+			link: '/admin/dashboard'
+		}
+	],
+	AdminManagementUserView: [
+		{
+			title: '管理',
+			link: '/admin/management'
+		},
+		{
+			title: '用户',
+			link: '/admin/management/user'
+		}
+	],
+	AdminMaintenanceBackupView: [
+		{
+			title: '维护',
+			link: '/admin/maintenance'
+		},
+		{
+			title: '备份',
+			link: '/admin/maintenance/backup'
+		}
+	],
+	AdminMaintenanceRestoreView: [
+		{
+			title: '维护',
+			link: '/admin/maintenance'
+		},
+		{
+			title: '恢复',
+			link: '/admin/maintenance/backup'
+		}
+	],
+	AdminInfoView: [
+		{
+			title: '个人中心',
+			link: '/admin/userinfo'
+		}
+	]
+}
+const route = useRoute()
+const activePageRoutes = ref([])
+const isCollapse = ref(true)
 
-onMounted(() => {
-	if (window.innerWidth > 1024) {
-		isCollapse.value = false;
+updateActivePageRoutes()
+if (window.innerWidth > 1024) {
+	isCollapse.value = false
+}
+
+watch(
+	() => route.name,
+	() => {
+		updateActivePageRoutes()
 	}
-});
+)
+
+function updateActivePageRoutes() {
+	activePageRoutes.value = PAGES[route.name.toString()] || []
+}
+
+function separator() {
+	return h('span', { class: 'text-[#95cdad] font-bold' }, '/')
+}
 </script>
 
 <template>
-	<el-container class="h-screen bg-[#f5f7f9ff]">
+	<!--	bg-[#f5f7f9ff]-->
+	<el-container class="h-screen bg-white">
 		<el-header class="bg-white flex items-center justify-between border-b-2">
 			<RouterLink to="/admin">
-				<h2 class="text-2xl text-[#2a9a5b]">ENote 后台管理</h2>
+				<h2 class="text-2xl text-[#2a9a5b] ml-1">ENote 后台管理</h2>
 			</RouterLink>
 			<el-dropdown>
-				<div class="flex items-center text-black">
+				<div class="flex items-center text-black text-base">
 					<span>张林鑫 ( Admin )</span>
 					<el-icon class="ml-1.5 mt-0.5">
 						<setting />
@@ -52,6 +115,7 @@ onMounted(() => {
 				<el-scrollbar>
 					<el-menu
 						class="clear-border"
+						active-text-color="#2a9a5b"
 						:collapse="isCollapse"
 						:default-active="router.currentRoute.value.name.toString()"
 						router
@@ -64,10 +128,7 @@ onMounted(() => {
 							<el-icon><Fold /></el-icon>
 							<template #title>折叠</template>
 						</el-menu-item>
-						<el-menu-item
-							index="AdminDashboardView"
-							@click="router.push('/admin/dashboard')"
-						>
+						<el-menu-item index="AdminDashboardView" @click="router.push('/admin/dashboard')">
 							<el-icon><PieChart /></el-icon>
 							<span>仪表盘</span>
 						</el-menu-item>
@@ -94,15 +155,34 @@ onMounted(() => {
 								@click="router.push('/admin/maintenance/backup')"
 							>
 								<el-icon><CopyDocument /></el-icon>
-								<span>备份 & 恢复</span>
+								<span>备份</span>
+							</el-menu-item>
+							<el-menu-item
+								index="AdminMaintenanceRestoreView"
+								@click="router.push('/admin/maintenance/restore')"
+							>
+								<el-icon><DocumentCopy /></el-icon>
+								<span>恢复</span>
 							</el-menu-item>
 						</el-sub-menu>
 					</el-menu></el-scrollbar
 				></el-aside
 			>
-			<el-main class="reset-padding">
-				<RouterView />
-			</el-main>
+			<el-container>
+				<el-header class="bg-white flex items-center justify-start border-b-2 text-xl">
+					<el-breadcrumb :separator-icon="separator" class="el-breadcrumb">
+						<el-breadcrumb-item
+							:to="{ path: items.link }"
+							v-for="items in activePageRoutes"
+							:key="items.link"
+							><span class="text-[#195c37]">{{ items.title }}</span></el-breadcrumb-item
+						>
+					</el-breadcrumb>
+				</el-header>
+				<el-main class="el-main">
+					<router-view />
+				</el-main>
+			</el-container>
 		</el-container>
 	</el-container>
 </template>
@@ -111,7 +191,10 @@ onMounted(() => {
 .clear-border {
 	border: none;
 }
-.reset-padding {
-	padding: 0.9rem;
+.el-main {
+	padding: 0.7rem 1.3rem;
+}
+.el-breadcrumb {
+	font-size: 1.2rem;
 }
 </style>
