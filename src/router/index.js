@@ -1,208 +1,192 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from 'vue-router'
 
-export const AdminLayout = () => import("@/layout/AdminLayout.vue");
-export const AuthView = () => import("@/views/AuthView.vue");
-export const LoginBlock = () => import("@/components/Auth/LoginBlock.vue");
-export const RegisterBlock = () =>
-	import("@/components/Auth/RegisterBlock.vue");
-export const ForgetBlock = () => import("@/components/Auth/ForgetBlock.vue");
+export const AdminLayout = () => import('@/layout/AdminLayout.vue')
+export const AuthView = () => import('@/views/AuthView.vue')
+export const LoginBlock = () => import('@/components/Auth/LoginBlock.vue')
+export const RegisterBlock = () => import('@/components/Auth/RegisterBlock.vue')
+export const ForgetBlock = () => import('@/components/Auth/ForgetBlock.vue')
 
 // 静态路由
 export const constantRoutes = [
 	{
-		path: "/",
+		path: '/',
 		meta: { hidden: true },
-		redirect: "/admin",
+		redirect: '/admin',
 		children: [
 			{
-				path: "userinfo",
-				name: "UserInfoView",
-				component: () => import("@/views/UserInfoView.vue"),
+				path: 'userinfo',
+				name: 'UserInfoView',
+				component: () => import('@/views/UserInfoView.vue'),
 				meta: {
-					title: "UserInfoView",
-					hidden: true,
-				},
-			},
-		],
+					title: 'UserInfoView',
+					hidden: true
+				}
+			}
+		]
 	},
 	{
 		// TODO 随机生成路径，防止被爬虫爬取
-		path: "/admin",
+		path: '/admin',
 		component: AdminLayout,
 		meta: { hidden: true },
-		redirect: "/admin/dashboard",
+		redirect: '/admin/dashboard',
 		children: [
 			{
-				path: "dashboard",
-				name: "AdminDashboardView",
-				component: () => import("@/views/admin/AdminDashboardView.vue"),
+				path: 'dashboard',
+				name: 'AdminDashboardView',
+				component: () => import('@/views/admin/AdminDashboardView.vue'),
 				meta: {
-					title: "AdminDashboardView",
-				},
+					title: 'AdminDashboardView'
+				}
 			},
 			{
-				path: "management",
-				name: "AdminManagement",
-				redirect: "/admin/management/user",
+				path: 'management',
+				name: 'AdminManagement',
+				redirect: '/admin/management/user',
 				meta: {
-					title: "AdminManagement",
+					title: 'AdminManagement'
 				},
 				children: [
 					{
-						path: "user",
-						name: "AdminManagementUserView",
-						component: () =>
-							import("@/views/admin/management/AdminManagementUserView.vue"),
+						path: 'user',
+						name: 'AdminManagementUserView',
+						component: () => import('@/views/admin/management/AdminManagementUserView.vue'),
 						meta: {
-							title: "AdminManagementUserView",
-						},
-					},
-				],
+							title: 'AdminManagementUserView'
+						}
+					}
+				]
 			},
 			{
-				path: "maintenance",
-				name: "AdminMaintenance",
-				redirect: "/admin/maintenance/backup",
+				path: 'maintenance',
+				name: 'AdminMaintenance',
+				redirect: '/admin/maintenance/backup',
 				meta: {
-					title: "AdminMaintenance",
+					title: 'AdminMaintenance'
 				},
 				children: [
 					{
-						path: "backup",
-						name: "AdminMaintenanceBackupView",
-						component: () =>
-							import(
-								"@/views/admin/maintenance/AdminMaintenanceBackupView.vue"
-							),
+						path: 'backup',
+						name: 'AdminMaintenanceBackupView',
+						component: () => import('@/views/admin/maintenance/AdminMaintenanceBackupView.vue'),
 						meta: {
-							title: "AdminMaintenanceBackupView",
-						},
+							title: 'AdminMaintenanceBackupView'
+						}
 					},
 					{
-						path: "restore",
-						name: "AdminMaintenanceRestoreView",
-						component: () =>
-							import(
-								"@/views/admin/maintenance/AdminMaintenanceRestoreView.vue"
-							),
+						path: 'restore',
+						name: 'AdminMaintenanceRestoreView',
+						component: () => import('@/views/admin/maintenance/AdminMaintenanceRestoreView.vue'),
 						meta: {
-							title: "AdminMaintenanceRestoreView",
-						},
-					},
-				],
+							title: 'AdminMaintenanceRestoreView'
+						}
+					}
+				]
 			},
 			{
-				path: "userinfo",
-				name: "AdminInfoView",
-				component: () => import("@/views/UserInfoView.vue"),
+				path: 'userinfo',
+				name: 'AdminInfoView',
+				component: () => import('@/views/UserInfoView.vue'),
 				meta: {
-					title: "AdminInfoView",
-					hidden: true,
-				},
-			},
-		],
+					title: 'AdminInfoView',
+					hidden: true
+				}
+			}
+		]
 	},
 	{
-		path: "/admin/auth",
-		name: "AdminAuthView",
+		path: '/admin/auth',
+		name: 'AdminAuthView',
 		component: AuthView,
 		meta: {
-			title: "AdminAuthView",
-			hidden: true,
+			title: 'AdminAuthView',
+			hidden: true
 		},
-		redirect: "/admin/auth/login",
+		redirect: '/admin/auth/login',
 		children: [
 			{
-				path: "login",
-				name: "AdminLoginBlock",
+				path: 'login',
+				name: 'AdminLoginBlock',
 				component: LoginBlock,
 				meta: {
-					title: "AdminLoginBlock",
-					hidden: true,
+					title: 'AdminLoginBlock',
+					hidden: true
 				},
 				props: {
-					pageMode: "admin",
-				},
+					pageMode: 'admin'
+				}
 			},
 			{
-				path: "forget",
-				name: "AdminForgetBlock",
+				path: 'forget',
+				name: 'AdminForgetBlock',
 				component: ForgetBlock,
 				meta: {
-					title: "AdminForgetBlock",
-					hidden: true,
+					title: 'AdminForgetBlock',
+					hidden: true
 				},
 				props: {
-					pageMode: "admin",
-				},
-			},
-		],
+					pageMode: 'admin'
+				}
+			}
+		]
 	},
 	{
-		path: "/auth",
-		name: "UserAuthView",
+		path: '/auth',
+		name: 'UserAuthView',
 		component: AuthView,
 		meta: {
-			title: "UserAuthView",
-			hidden: true,
+			title: 'UserAuthView',
+			hidden: true
 		},
-		redirect: "/auth/login",
+		redirect: '/auth/login',
 		children: [
 			{
-				path: "login",
-				name: "UserLoginBlock",
+				path: 'login',
+				name: 'UserLoginBlock',
 				component: LoginBlock,
 				meta: {
-					title: "UserLoginBlock",
-					hidden: true,
+					title: 'UserLoginBlock',
+					hidden: true
 				},
 				props: {
-					pageMode: "user",
-				},
+					pageMode: 'user'
+				}
 			},
 			{
-				path: "register",
-				name: "UserRegisterBlock",
+				path: 'register',
+				name: 'UserRegisterBlock',
 				component: RegisterBlock,
 				meta: {
-					title: "UserRegisterBlock",
-					hidden: true,
+					title: 'UserRegisterBlock',
+					hidden: true
 				},
 				props: {
-					pageMode: "user",
-				},
+					pageMode: 'user'
+				}
 			},
 			{
-				path: "forget",
-				name: "UserForgetBlock",
+				path: 'forget',
+				name: 'UserForgetBlock',
 				component: ForgetBlock,
 				meta: {
-					title: "UserForgetBlock",
-					hidden: true,
+					title: 'UserForgetBlock',
+					hidden: true
 				},
 				props: {
-					pageMode: "user",
-				},
-			},
-		],
+					pageMode: 'user'
+				}
+			}
+		]
 	},
 	{
-		path: "/401",
-		component: () => import("@/views/error/401View.vue"),
+		path: '/404',
+		component: () => import('@/views/error/404View.vue'),
 		meta: { hidden: true },
 		props: {
-			message: "站长说你不能进入这个页面...",
-		},
+			message: '页面不存在...'
+		}
 	},
-	{
-		path: "/404",
-		component: () => import("@/views/error/404View.vue"),
-		meta: { hidden: true },
-		props: {
-			message: "页面不存在...",
-		},
-	},
-	{ path: "/:pathMatch(.*)", redirect: "/404", meta: { hidden: true } },
+	{ path: '/:pathMatch(.*)', redirect: '/404', meta: { hidden: true } }
 
 	// {
 	// 	path: "/",
@@ -287,7 +271,7 @@ export const constantRoutes = [
              },
          ]
      }*/
-];
+]
 
 /**
  * 创建路由
@@ -296,14 +280,14 @@ const router = createRouter({
 	history: createWebHashHistory(),
 	routes: constantRoutes,
 	// 刷新时，滚动条位置还原
-	scrollBehavior: () => ({ left: 0, top: 0 }),
-});
+	scrollBehavior: () => ({ left: 0, top: 0 })
+})
 
 /**
  * 重置路由
  */
 export function resetRouter() {
-	router.replace({ path: "/login" }).then(() => {});
+	router.replace({ path: '/login' }).then(() => {})
 }
 
-export default router;
+export default router
