@@ -152,8 +152,9 @@ handleRefreshService()
 				<li>
 					二进制文件
 					<ul class="list-disc ml-4 text-gray-500">
-						<li>图像、视频、音频</li>
-						<li>等其他附件</li>
+						<li>图像</li>
+						<li>视频</li>
+						<li>音频</li>
 					</ul>
 				</li>
 			</ul>

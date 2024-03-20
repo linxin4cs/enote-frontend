@@ -114,7 +114,7 @@ handelRefreshService()
 </script>
 
 <template>
-	<el-dialog v-model="isShowBackupUpload" class="max-w-96">
+	<el-dialog v-model="isShowBackupUpload" class="min-w-72 max-w-96">
 		<template #header>
 			<div class="flex items-center text-xl text-[#e04969]">
 				<el-icon><WarningFilled /></el-icon>
@@ -143,7 +143,7 @@ handelRefreshService()
 		>
 			<el-icon class="el-icon--upload"><upload-filled /></el-icon>
 			<div class="el-upload__text">
-				将文件拖放到这或<span class="text-[#2a9a5b]">点击上传</span>
+				将文件拖放到这或<span class="text-[#2a9a5b]">手动选择</span>
 			</div>
 		</el-upload>
 		<template #footer>
@@ -189,8 +189,9 @@ handelRefreshService()
 				<li>
 					二进制文件
 					<ul class="list-disc ml-4 text-gray-500">
-						<li>图像、视频、音频</li>
-						<li>等其他附件</li>
+						<li>图像</li>
+						<li>视频</li>
+						<li>音频</li>
 					</ul>
 				</li>
 			</ul>
