@@ -111,8 +111,8 @@ function handleCollapse(mode) {
 				</RouterLink>
 			</div>
 			<el-dropdown>
-				<div class="flex items-center text-black text-base">
-					<span>张林鑫 ( Admin )</span>
+				<div class="flex items-center text-black text-base hover:text-[#2a9a5b]">
+					<span class="text-gray-700">张林鑫</span>
 					<el-icon class="ml-1.5 mt-0.5">
 						<setting />
 					</el-icon>
@@ -122,7 +122,9 @@ function handleCollapse(mode) {
 						<router-link to="/admin/userinfo">
 							<el-dropdown-item>个人中心</el-dropdown-item>
 						</router-link>
-						<el-dropdown-item divided>退出登录</el-dropdown-item>
+						<router-link to="/admin/auth/login">
+							<el-dropdown-item divided>退出登录</el-dropdown-item>
+						</router-link>
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>
