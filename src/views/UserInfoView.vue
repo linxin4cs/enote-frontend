@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 import defaultAvatar from '@/assets/default_avatar.png'
 import { ElMessage } from 'element-plus'
+import { User, Message, Lock } from '@element-plus/icons-vue'
 
 const avatarUploadVisible = ref(false)
 const avatar = ref([])
@@ -77,7 +78,7 @@ function handleSaveEdit() {
 				<el-divider />
 				<div class="text-[#4a4b4eff]">
 					<div class="flex justify-between">
-						<span class="mr-10">昵称</span>
+						<span class="mr-10">用户名</span>
 						<span>张林鑫</span>
 					</div>
 					<el-divider />
@@ -91,27 +92,57 @@ function handleSaveEdit() {
 		<el-card shadow="hover">
 			<el-tabs stretch class="mt-[-0.5rem]">
 				<el-tab-pane>
-					<template #label> <span class="hover:text-[#2a9a5b] text-lg"> 修改信息 </span> </template>
-					<el-form label-width="auto" class="max-w-64">
-						<el-form-item label="昵称" required>
-							<el-input />
+					<template #label> <span class="hover:text-[#2a9a5b] text-lg">修改信息</span> </template>
+					<el-form label-width="auto" class="min-w-[14.5rem] max-w-64">
+						<el-form-item required>
+							<el-input placeholder="请输入用户名">
+								<template #prefix>
+									<el-icon>
+										<User />
+									</el-icon>
+								</template>
+							</el-input>
 						</el-form-item>
-						<el-form-item label="邮箱" required>
-							<el-input />
+						<el-form-item required>
+							<el-input placeholder="请输入邮箱">
+								<template #prefix>
+									<el-icon>
+										<Message />
+									</el-icon>
+								</template>
+							</el-input>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
 				<el-tab-pane>
-					<template #label> <span class="hover:text-[#2a9a5b] text-lg"> 修改信息 </span> </template>
+					<template #label> <span class="hover:text-[#2a9a5b] text-lg">修改信息</span></template>
 					<el-form label-width="auto" class="max-w-64">
-						<el-form-item label="旧密码" required>
-							<el-input />
+						<el-form-item required>
+							<el-input placeholder="旧密码">
+								<template #prefix>
+									<el-icon>
+										<Lock />
+									</el-icon>
+								</template>
+							</el-input>
 						</el-form-item>
-						<el-form-item label="新密码" required>
-							<el-input />
+						<el-form-item required>
+							<el-input placeholder="新密码">
+								<template #prefix>
+									<el-icon>
+										<Lock />
+									</el-icon>
+								</template>
+							</el-input>
 						</el-form-item>
-						<el-form-item label="确认新密码" required>
-							<el-input />
+						<el-form-item required>
+							<el-input placeholder="确认新密码">
+								<template #prefix>
+									<el-icon>
+										<Lock />
+									</el-icon>
+								</template>
+							</el-input>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
