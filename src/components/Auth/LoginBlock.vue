@@ -1,5 +1,5 @@
 <script setup>
-import { Lock, Message, User } from '@element-plus/icons-vue'
+import { Lock, Message } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 
