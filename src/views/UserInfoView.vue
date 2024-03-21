@@ -83,7 +83,7 @@ function handleSaveEdit() {
 					</div>
 					<el-divider />
 					<div class="flex justify-between">
-						<span class="mr-10">邮箱</span>
+						<span class="mr-12">邮箱</span>
 						<span>1650349707@qq.com</span>
 					</div>
 				</div>
@@ -93,7 +93,7 @@ function handleSaveEdit() {
 			<el-tabs stretch class="mt-[-0.5rem]">
 				<el-tab-pane>
 					<template #label> <span class="hover:text-[#2a9a5b] text-lg">修改信息</span> </template>
-					<el-form label-width="auto" class="min-w-[14.5rem] max-w-64">
+					<el-form label-width="auto" class="max-w-64">
 						<el-form-item required>
 							<el-input placeholder="请输入用户名">
 								<template #prefix>
