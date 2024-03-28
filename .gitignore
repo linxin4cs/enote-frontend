@@ -28,3 +28,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+/enote-frontend.iml
+/pnpm-lock.yaml

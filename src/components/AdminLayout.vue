@@ -11,8 +11,11 @@ import {
 	CopyDocument,
 	DocumentCopy
 } from '@element-plus/icons-vue'
-import router from '@/router'
+import router, { toLogin } from '@/utils/router'
 import { useRoute } from 'vue-router'
+import service from '@/utils/requests'
+import { ElMessage } from 'element-plus'
+import { resetUserInfo } from '@/utils/store'
 
 const PAGES = {
 	AdminDashboardView: [
@@ -95,6 +98,14 @@ function handleCollapse(mode) {
 
 	isExpandIcon.value = mode === 'fold'
 }
+
+function logout() {
+	service.post('/api/auth/logout').then(() => {
+		resetUserInfo()
+		toLogin('admin')
+		ElMessage.success('退出登录成功')
+	})
+}
 </script>
 
 <template>
@@ -122,9 +133,7 @@ function handleCollapse(mode) {
 						<router-link to="/admin/userinfo">
 							<el-dropdown-item>个人中心</el-dropdown-item>
 						</router-link>
-						<router-link to="/admin/auth/login">
-							<el-dropdown-item divided>退出登录</el-dropdown-item>
-						</router-link>
+						<el-dropdown-item @click="logout" divided>退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</template>
 			</el-dropdown>

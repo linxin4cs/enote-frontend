@@ -4,6 +4,10 @@ import { ref } from 'vue'
 import defaultAvatar from '@/assets/default_avatar.png'
 import { ElMessage } from 'element-plus'
 import { User, Message, Lock } from '@element-plus/icons-vue'
+import useStore from '@/utils/store'
+import { formatDate } from '../utils/format'
+
+const store = useStore()
 
 const avatarUploadVisible = ref(false)
 const avatar = ref([])
@@ -54,7 +58,7 @@ function handleSaveEdit() {
 			</el-tooltip>
 		</template>
 	</el-dialog>
-	<div class="flex flex-wrap gap-2">
+	<div class="flex flex-wrap gap-2 items-start">
 		<el-card class="pb-6" shadow="hover">
 			<template #header>
 				<div class="card-header flex justify-between items-center">
@@ -71,20 +75,30 @@ function handleSaveEdit() {
 						<el-image
 							class="h-32 w-32 rounded-full"
 							fit="cover"
-							:src="userInfo?.avatarUrl || defaultAvatar"
+							:src="!store.userInfo.avatar ? defaultAvatar : store.userInfo.avatar"
 						/>
 					</div>
 				</div>
 				<el-divider />
 				<div class="text-[#4a4b4eff]">
 					<div class="flex justify-between">
-						<span class="mr-10">用户名</span>
-						<span>张林鑫</span>
+						<span class="mr-12">ID</span>
+						<span>{{ store.userInfo.id }}</span>
+					</div>
+					<el-divider />
+					<div class="flex justify-between">
+						<span class="mr-12">用户名</span>
+						<span>{{ store.userInfo.name }}</span>
 					</div>
 					<el-divider />
 					<div class="flex justify-between">
 						<span class="mr-12">邮箱</span>
-						<span>1650349707@qq.com</span>
+						<span>{{ store.userInfo.email }}</span>
+					</div>
+					<el-divider />
+					<div class="flex justify-between">
+						<span class="mr-12">创建于</span>
+						<span>{{ formatDate(store.userInfo.createdAt) }}</span>
 					</div>
 				</div>
 			</template>

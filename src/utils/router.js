@@ -1,6 +1,9 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import useStore, { setUserInfo } from '@/utils/store'
+import { ElMessage } from 'element-plus'
+import service from '@/utils/requests'
 
-export const AdminLayout = () => import('@/layout/AdminLayout.vue')
+export const AdminLayout = () => import('@/components/AdminLayout.vue')
 export const AuthView = () => import('@/views/AuthView.vue')
 export const LoginBlock = () => import('@/components/Auth/LoginBlock.vue')
 export const RegisterBlock = () => import('@/components/Auth/RegisterBlock.vue')
@@ -10,8 +13,9 @@ export const ForgetBlock = () => import('@/components/Auth/ForgetBlock.vue')
 export const constantRoutes = [
 	{
 		path: '/',
-		meta: { hidden: true },
-		redirect: '/admin',
+		name: 'UserLayout',
+		meta: { title: 'UserLayout', hidden: true },
+		redirect: '/userinfo',
 		children: [
 			{
 				path: 'userinfo',
@@ -25,10 +29,10 @@ export const constantRoutes = [
 		]
 	},
 	{
-		// TODO 随机生成路径，防止被爬虫爬取
 		path: '/admin',
+		name: 'AdminLayout',
 		component: AdminLayout,
-		meta: { hidden: true },
+		meta: { title: 'AdminLayout', hidden: true },
 		redirect: '/admin/dashboard',
 		children: [
 			{
@@ -106,10 +110,10 @@ export const constantRoutes = [
 		children: [
 			{
 				path: 'login',
-				name: 'AdminLoginBlock',
+				name: 'AdminAuthLoginBlock',
 				component: LoginBlock,
 				meta: {
-					title: 'AdminLoginBlock',
+					title: 'AdminAuthLoginBlock',
 					hidden: true
 				},
 				props: {
@@ -118,10 +122,10 @@ export const constantRoutes = [
 			},
 			{
 				path: 'forget',
-				name: 'AdminForgetBlock',
+				name: 'AdminAuthForgetBlock',
 				component: ForgetBlock,
 				meta: {
-					title: 'AdminForgetBlock',
+					title: 'AdminAuthForgetBlock',
 					hidden: true
 				},
 				props: {
@@ -142,10 +146,10 @@ export const constantRoutes = [
 		children: [
 			{
 				path: 'login',
-				name: 'UserLoginBlock',
+				name: 'UserAuthLoginBlock',
 				component: LoginBlock,
 				meta: {
-					title: 'UserLoginBlock',
+					title: 'UserAuthLoginBlock',
 					hidden: true
 				},
 				props: {
@@ -154,10 +158,10 @@ export const constantRoutes = [
 			},
 			{
 				path: 'register',
-				name: 'UserRegisterBlock',
+				name: 'UserAuthRegisterBlock',
 				component: RegisterBlock,
 				meta: {
-					title: 'UserRegisterBlock',
+					title: 'UserAuthRegisterBlock',
 					hidden: true
 				},
 				props: {
@@ -166,10 +170,10 @@ export const constantRoutes = [
 			},
 			{
 				path: 'forget',
-				name: 'UserForgetBlock',
+				name: 'UserAuthForgetBlock',
 				component: ForgetBlock,
 				meta: {
-					title: 'UserForgetBlock',
+					title: 'UserAuthForgetBlock',
 					hidden: true
 				},
 				props: {
@@ -180,97 +184,13 @@ export const constantRoutes = [
 	},
 	{
 		path: '/404',
-		component: () => import('@/views/error/404View.vue'),
+		component: () => import('@/views/404View.vue'),
 		meta: { hidden: true },
 		props: {
 			message: '页面不存在...'
 		}
 	},
 	{ path: '/:pathMatch(.*)', redirect: '/404', meta: { hidden: true } }
-
-	// {
-	// 	path: "/",
-	// 	name: "/",
-	// 	component: Layout,
-	// 	redirect: "/dashboard",
-	// 	children: [
-	// 		{
-	// 			path: "dashboard",
-	// 			component: () => import("@/views/dashboard/index.vue"),
-	// 			name: "Dashboard", // 用于 keep-alive, 必须与SFC自动推导或者显示声明的组件name一致
-	// 			// https://cn.vuejs.org/guide/built-ins/keep-alive.html#include-exclude
-	// 			meta: {
-	// 				title: "dashboard",
-	// 				icon: "homepage",
-	// 				affix: true,
-	// 				keepAlive: true,
-	// 				alwaysShow: false,
-	// 			},
-	// 		},
-	// 		{
-	// 			path: "401",
-	// 			component: () => import("@/views/error-page/401View.vue"),
-	// 			meta: { hidden: true },
-	// 		},
-	// 		{
-	// 			path: "404",
-	// 			component: () => import("@/views/error-page/404View.vue"),
-	// 			meta: { hidden: true },
-	// 		},
-	// 	],
-	// },
-
-	// 外部链接
-	// {
-	//   path: "/external-link",
-	//   component: Layout,
-	//   children: [ {
-	//       component: () => import("@/views/external-link/index.vue"),
-	//       path: "https://www.cnblogs.com/",
-	//       meta: { title: "外部链接", icon: "link" },
-	//     },
-	//   ],
-	// },
-	// 多级嵌套路由
-	/* {
-         path: '/nested',
-         component: Layout,
-         redirect: '/nested/level1/level2',
-         name: 'Nested',
-         meta: {title: '多级菜单', icon: 'nested'},
-         children: [
-             {
-                 path: 'level1',
-                 component: () => import('@/views/nested/level1/index.vue'),
-                 name: 'Level1',
-                 meta: {title: '菜单一级'},
-                 redirect: '/nested/level1/level2',
-                 children: [
-                     {
-                         path: 'level2',
-                         component: () => import('@/views/nested/level1/level2/index.vue'),
-                         name: 'Level2',
-                         meta: {title: '菜单二级'},
-                         redirect: '/nested/level1/level2/level3',
-                         children: [
-                             {
-                                 path: 'level3-1',
-                                 component: () => import('@/views/nested/level1/level2/level3/index1.vue'),
-                                 name: 'Level3-1',
-                                 meta: {title: '菜单三级-1'}
-                             },
-                             {
-                                 path: 'level3-2',
-                                 component: () => import('@/views/nested/level1/level2/level3/index2.vue'),
-                                 name: 'Level3-2',
-                                 meta: {title: '菜单三级-2'}
-                             }
-                         ]
-                     }
-                 ]
-             },
-         ]
-     }*/
 ]
 
 /**
@@ -286,8 +206,74 @@ const router = createRouter({
 /**
  * 重置路由
  */
-export function resetRouter() {
-	router.replace({ path: '/login' }).then(() => {})
+export function toLogin(mode) {
+	let redirectPath = '/auth/login'
+
+	if (mode) {
+		if (mode === 'admin') {
+			redirectPath = '/admin' + redirectPath
+		}
+	} else {
+		if (
+			typeof router.currentRoute.value.name === 'string' &&
+			router.currentRoute.value.name.includes('Admin')
+		) {
+			redirectPath = '/admin' + redirectPath
+		}
+	}
+
+	router.replace({ path: redirectPath }).then(() => {})
 }
+
+router.beforeEach(async (to, from, next) => {
+	const store = useStore()
+
+	if (store.isFeteched.userInfo === false) {
+		store.isFeteched.userInfo = true
+		await service.get('/api/user/me').then((data) => {
+			setUserInfo(data.data)
+		})
+	}
+
+	if (to.name) {
+		if (store.userInfo.id === 0) {
+			if (!to.name.startsWith('AdminAuth') && to.name.startsWith('Admin')) {
+				ElMessage.error('没有权限，请登录！')
+				next('/admin/auth/login')
+				return
+			} else if (!to.name.startsWith('UserAuth') && to.name.startsWith('User')) {
+				ElMessage.error('没有权限，请登录！')
+				next('/auth/login')
+				return
+			}
+		} else {
+			if (to.name.startsWith('AdminAuth')) {
+				if (store.userInfo.role === 1 || store.userInfo.role === 2) {
+					ElMessage.warning('已经登录！')
+					next('/admin')
+					return
+				}
+			} else if (to.name.startsWith('UserAuth')) {
+				ElMessage.warning('已经登录！')
+				next('/')
+				return
+			}
+
+			if (!to.name.startsWith('AdminAuth') && to.name.startsWith('Admin')) {
+				if (store.userInfo.role === 0) {
+					ElMessage.error('没有管理员权限！')
+					next('/')
+					return
+				}
+			}
+		}
+	}
+
+	next()
+})
+
+router.afterEach(() => {
+	console.log(router.currentRoute.value.path)
+})
 
 export default router

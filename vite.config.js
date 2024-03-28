@@ -1,15 +1,15 @@
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig } from 'vite'
+import {defineConfig, loadEnv} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
-const BASE_API = '/api'
-const TARGET_API = 'http:// localhost:8080'
-
 // https://vitejs.dev/config/
+
+const env = loadEnv('', process.cwd())
+
 export default defineConfig({
 	server: {
 		// 允许IP访问
@@ -20,13 +20,12 @@ export default defineConfig({
 		open: false,
 		proxy: {
 			/** 代理前缀为 /api 的请求  */
-			BASE_API: {
+			[env.VITE_APP_BASE_API]: {
 				changeOrigin: true,
 				// 接口地址
-				target: TARGET_API,
-				rewrite: (path) => path.replace(new RegExp('^' + BASE_API), '')
-			}
-		}
+				target: env.VITE_APP_API_URL,
+			},
+		},
 	},
 	plugins: [
 		vue(),
