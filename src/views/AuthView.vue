@@ -5,7 +5,7 @@
 		class="bg-image flex justify-center lg:justify-end items-center h-screen lg:pr-32 text-center"
 	>
 		<div class="border-2 flex rounded-lg p-10 shadow-lg bg-white">
-			<router-view v-slot="{ Component }">
+			<router-view v-slot="{ Component }" :key="$route.fullPath">
 				<transition name="el-fade-in-linear" mode="out-in">
 					<component :is="Component" />
 				</transition>

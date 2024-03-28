@@ -2,6 +2,8 @@
 import { reactive, ref } from 'vue'
 import { EditPen, Message, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import service from '@/utils/requests'
+import { toLogin } from '@/utils/router'
 
 const props = defineProps(['pageMode'])
 const pageMode = props.pageMode
@@ -53,9 +55,9 @@ const rules = {
 	password: [
 		{ required: true, message: '请输入密码', trigger: ['change', 'blur'] },
 		{
-			min: 6,
-			max: 16,
-			message: '长度只能在 6 到 16 之间',
+			min: 8,
+			max: 20,
+			message: '长度只能在 8 到 20 之间',
 			trigger: ['blur', 'change']
 		}
 	],
@@ -68,22 +70,63 @@ const onValidate = (prop, isValid) => {
 	}
 }
 
-const validateEmail = () => {}
+const sendCode = () => {
+	service
+		.post('/api/auth/send-reset-code', {
+			data: form.email
+		})
+		.then(() => {
+			ElMessage.success('发送成功！')
+			coldDownTime.value = 60
+			setInterval(() => coldDownTime.value--, 1000)
+		})
+		.catch((error) => {
+			ElMessage.error(error.data.message)
+		})
+}
 
-const startReset = () => {
+const validateResetCode = () => {
 	formRef1.value.validate((valid) => {
 		if (valid) {
-			/* empty */
+			service
+				.post('/api/auth/validate-reset-code', {
+					data: {
+						email: form.email,
+						code: form.code
+					}
+				})
+				.then(() => {
+					active.value++
+				})
+				.catch((error) => {
+					ElMessage.error(error.data.message)
+				})
 		} else {
 			ElMessage.warning('请填写完整信息')
 		}
 	})
 }
 
-const doReset = () => {
+const resetPassword = () => {
 	formRef2.value.validate((valid) => {
 		if (valid) {
-			/* empty */
+			service
+				.post('/api/auth/reset-password', {
+					data: form.password
+				})
+				.then(() => {
+					ElMessage.success('重置成功')
+
+					if (pageMode === 'admin') {
+						toLogin('admin')
+						return
+					}
+
+					toLogin()
+				})
+				.catch((error) => {
+					ElMessage.error(error.data.message)
+				})
 		} else {
 			ElMessage.warning('请填写完整信息')
 		}
@@ -123,8 +166,9 @@ const doReset = () => {
 							</el-col>
 							<el-col :span="5">
 								<el-button
-									@click="validateEmail"
-									color="#67c23aff"
+									@click="sendCode"
+									type="primary"
+									color="#2a9a5b"
 									:disabled="!isEmailValid || coldDownTime > 0"
 									>{{ coldDownTime > 0 ? '请稍后 ' + coldDownTime + '秒' : '获取验证码' }}
 								</el-button>
@@ -132,7 +176,7 @@ const doReset = () => {
 						</el-row>
 					</el-form-item>
 				</el-form>
-				<el-button @click="startReset" class="w-28" color="#f56c6cff" plain
+				<el-button @click="validateResetCode" class="w-28" color="#f56c6cff" plain
 					>开始重置密码
 				</el-button>
 				<el-divider>
@@ -142,9 +186,7 @@ const doReset = () => {
 					<el-button class="w-28" color="#67c23aff" plain>去登录 </el-button>
 				</router-link>
 			</div>
-		</transition>
-		<transition name="el-fade-in-linear" mode="out-in">
-			<div v-if="active === 1">
+			<div v-else-if="active === 1">
 				<div class="mt-2 mb-1 text-2xl">重置密码</div>
 				<div class="text-sm text-gray-400 mb-6">请填写您的新密码，务必牢记，防止丢失</div>
 				<el-form :model="form" :rules="rules" @validate="onValidate" class="w-72" ref="formRef2">
@@ -172,7 +214,7 @@ const doReset = () => {
 						</el-input>
 					</el-form-item>
 				</el-form>
-				<el-button @click="doReset" class="w-28" type="danger" plain>立即重置密码 </el-button>
+				<el-button @click="resetPassword" class="w-28" type="danger" plain>立即重置密码 </el-button>
 				<el-divider>
 					<span class="text-gray-400 text-xs">点错了？</span>
 				</el-divider>

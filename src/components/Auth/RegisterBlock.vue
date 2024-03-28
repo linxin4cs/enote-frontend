@@ -2,6 +2,12 @@
 import { Lock, Message, EditPen } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import service from '@/utils/requests'
+import router from '@/utils/router'
+import { setUserInfo } from '@/utils/store'
+
+const props = defineProps(['pageMode'])
+const pageMode = props.pageMode
 
 const form = reactive({
 	// username: '',
@@ -11,15 +17,15 @@ const form = reactive({
 	code: ''
 })
 
-const validateUsername = (rule, value, callback) => {
-	if (value === '') {
-		callback(new Error('请输入用户名'))
-	} else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
-		callback(new Error('用户名只能包中文、英文和数字'))
-	} else {
-		callback()
-	}
-}
+// const validateUsername = (rule, value, callback) => {
+// 	if (value === '') {
+// 		callback(new Error('请输入用户名'))
+// 	} else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
+// 		callback(new Error('用户名只能包中文、英文和数字'))
+// 	} else {
+// 		callback()
+// 	}
+// }
 
 const ValidatePasswordAgain = (rule, value, callback) => {
 	if (value === '') {
@@ -32,21 +38,21 @@ const ValidatePasswordAgain = (rule, value, callback) => {
 }
 
 const rules = {
-	username: [
-		{ validator: validateUsername, trigger: ['blur', 'change'] },
-		{
-			min: 3,
-			max: 8,
-			message: '长度只能在 3 到 8 之间',
-			trigger: ['blur', 'change']
-		}
-	],
+	// username: [
+	// 	{ validator: validateUsername, trigger: ['blur', 'change'] },
+	// 	{
+	// 		min: 3,
+	// 		max: 20,
+	// 		message: '长度只能在 3 到 20 之间',
+	// 		trigger: ['blur', 'change']
+	// 	}
+	// ],
 	password: [
 		{ required: true, message: '请输入密码', trigger: ['change', 'blur'] },
 		{
-			min: 6,
-			max: 16,
-			message: '长度只能在 6 到 16 之间',
+			min: 8,
+			max: 20,
+			message: '长度只能在 8 到 20 之间',
 			trigger: ['blur', 'change']
 		}
 	],
@@ -85,14 +91,68 @@ const onValidate = (prop, isValid) => {
 const register = () => {
 	formRef.value.validate((isValid) => {
 		if (isValid) {
-			/* empty */
+			service
+				.post('/api/auth/register', {
+					data: {
+						// username: form.username,
+						password: form.password,
+						email: form.email,
+						code: form.code
+					}
+				})
+				.then(() => {
+					ElMessage.success('注册成功！')
+
+					service
+						.post(
+							'/auth/login',
+							{
+								username: form.email,
+								password: form.password,
+								remember: true
+							},
+							{
+								headers: {
+									'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+								}
+							}
+						)
+						.then(() => {
+							service.get('/api/user/me').then((res) => {
+								const userInfo = res.data
+
+								setUserInfo(userInfo)
+								router.push('/')
+								ElMessage.success('登录成功')
+							})
+						})
+						.catch((error) => {
+							ElMessage.error(error.data.message)
+						})
+				})
+				.catch((error) => {
+					ElMessage.error(error.data.message)
+				})
 		} else {
 			ElMessage.warning('请填写完整信息')
 		}
 	})
 }
 
-const validateEmail = () => {}
+const sendCode = () => {
+	service
+		.post('/api/auth/send-register-code', {
+			data: form.email
+		})
+		.then(() => {
+			ElMessage.success('发送成功！')
+			coldDownTime.value = 60
+			setInterval(() => coldDownTime.value--, 1000)
+		})
+		.catch((error) => {
+			ElMessage.error(error.data.message)
+		})
+}
 </script>
 
 <template>
@@ -158,8 +218,9 @@ const validateEmail = () => {}
 					</el-col>
 					<el-col :span="5">
 						<el-button
-							@click="validateEmail"
-							color="#67c23aff"
+							@click="sendCode"
+							type="primary"
+							color="#2a9a5b"
 							:disabled="!isEmailValid || coldDownTime > 0"
 							>{{ coldDownTime > 0 ? '请稍后 ' + coldDownTime + '秒' : '获取验证码' }}
 						</el-button>

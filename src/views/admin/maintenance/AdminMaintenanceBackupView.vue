@@ -29,7 +29,9 @@ const PROGRESS_STATUS = {
 
 const activeStep = ref(0)
 const serviceStatus = reactive({
-	postgresql: 'offline',
+	mysql: 'offline',
+	mongodb: 'offline',
+	redis: 'offline',
 	file: 'offline'
 })
 const isShowBackupDownloadInfo = ref(false)
@@ -40,15 +42,24 @@ const backupStatus = ref('loading')
 const failReason = ref('')
 
 const isAllServicesOnline = computed(() => {
-	return serviceStatus.postgresql === 'online' && serviceStatus.file === 'online'
+	return (
+		serviceStatus.mysql === 'online' &&
+		serviceStatus.mongodb === 'online' &&
+		serviceStatus.redis === 'online' &&
+		serviceStatus.file === 'online'
+	)
 })
 
 function handleRefreshService() {
-	serviceStatus.postgresql = 'loading'
+	serviceStatus.mysql = 'loading'
+	serviceStatus.mongodb = 'loading'
+	serviceStatus.redis = 'loading'
 	serviceStatus.file = 'loading'
 
 	setTimeout(() => {
-		serviceStatus.postgresql = 'online'
+		serviceStatus.mysql = 'online'
+		serviceStatus.mongodb = 'online'
+		serviceStatus.redis = 'online'
 		serviceStatus.file = 'online'
 	}, 1000)
 }
@@ -140,15 +151,24 @@ handleRefreshService()
 			</template>
 			<p class="font-bold">备份清单：</p>
 			<ul class="list-disc ml-4 text-gray-600">
-				<li>
-					postgresql 数据库
-					<ul class="list-disc ml-4 text-gray-500">
-						<li>所有数据文件（用户、笔记等）</li>
-						<li>视图和索引</li>
-						<li>事务日志</li>
-						<li>等其他文件</li>
-					</ul>
-				</li>
+				<!--				<li>-->
+				<!--					MySQL 数据库-->
+				<!--					<ul class="list-disc ml-4 text-gray-500">-->
+				<!--						<li>所有数据文件（用户、笔记等）</li>-->
+				<!--						<li>视图和索引</li>-->
+				<!--						<li>事务日志</li>-->
+				<!--						<li>等其他文件</li>-->
+				<!--					</ul>-->
+				<!--				</li>-->
+				<!--				<li>-->
+				<!--					MongoDB 数据库-->
+				<!--				</li>-->
+				<!--				<li>-->
+				<!--					Redis 数据库-->
+				<!--				</li>-->
+				<li>所有数据文件（用户、笔记等）</li>
+				<li>视图和索引</li>
+				<li>事务日志</li>
 				<li>
 					二进制文件
 					<ul class="list-disc ml-4 text-gray-500">
@@ -157,6 +177,7 @@ handleRefreshService()
 						<li>音频</li>
 					</ul>
 				</li>
+				<li>等其他文件</li>
 			</ul>
 			<el-divider border-style="dashed" />
 			<p class="font-bold">
@@ -164,19 +185,49 @@ handleRefreshService()
 			</p>
 			<ul class="list-disc text-gray-500 ml-0">
 				<li class="flex items-center">
-					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.postgresql === 'online'"
+					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.mysql === 'online'"
 						><Select
 					/></el-icon>
-					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.postgresql === 'offline'"
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.mysql === 'offline'"
 						><CloseBold
 					/></el-icon>
 					<el-icon
 						color="#1f87e8ff"
 						class="is-loading mr-0.5"
-						v-else-if="serviceStatus.postgresql === 'loading'"
+						v-else-if="serviceStatus.mysql === 'loading'"
 						><Loading
 					/></el-icon>
-					PostgreSQL
+					MySQL
+				</li>
+				<li class="flex items-center">
+					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.mongodb === 'online'"
+						><Select
+					/></el-icon>
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.mongodb === 'offline'"
+						><CloseBold
+					/></el-icon>
+					<el-icon
+						color="#1f87e8ff"
+						class="is-loading mr-0.5"
+						v-else-if="serviceStatus.mongodb === 'loading'"
+						><Loading
+					/></el-icon>
+					MongoDB
+				</li>
+				<li class="flex items-center">
+					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.redis === 'online'"
+						><Select
+					/></el-icon>
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.redis === 'offline'"
+						><CloseBold
+					/></el-icon>
+					<el-icon
+						color="#1f87e8ff"
+						class="is-loading mr-0.5"
+						v-else-if="serviceStatus.redis === 'loading'"
+						><Loading
+					/></el-icon>
+					Redis
 				</li>
 				<li class="flex items-center">
 					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.file === 'online'"
@@ -196,7 +247,7 @@ handleRefreshService()
 			</ul>
 			<template #footer>
 				<div class="flex justify-between">
-					<el-button type="primary" color="#2a9a5b" plan @click="handleRefreshService"
+					<el-button type="primary" color="#2a9a5b" plain @click="handleRefreshService"
 						>刷新服务</el-button
 					>
 					<el-tooltip
