@@ -2,7 +2,7 @@
 import { Lock, Message } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
 import { ElMessage } from 'element-plus'
-import service from '@/utils/requests'
+import service from '@/utils/request'
 import router, { toLogin } from '@/utils/router'
 import { setUserInfo } from '@/utils/store'
 
@@ -15,7 +15,7 @@ const form = reactive({
 	remember: false
 })
 
-const login = () => {
+function login() {
 	if (!form.username || !form.password) {
 		ElMessage.warning('请填写用户名和密码！')
 	} else {

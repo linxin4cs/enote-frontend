@@ -1,9 +1,7 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
 import { ElMessageBox } from 'element-plus'
-
-const ROLE_LIST = ['普通用户', '管理员', '超级管理员']
-const STATUS_LIST = ['禁用', '启用']
+import { ROLE_LIST, STATUS_LIST } from '@/utils/constant'
 
 const users = [
 	{

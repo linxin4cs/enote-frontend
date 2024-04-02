@@ -1,7 +1,7 @@
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import useStore, { setUserInfo } from '@/utils/store'
 import { ElMessage } from 'element-plus'
-import service from '@/utils/requests'
+import service from '@/utils/request'
 
 export const AdminLayout = () => import('@/components/AdminLayout.vue')
 export const AuthView = () => import('@/views/AuthView.vue')

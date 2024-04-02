@@ -2,12 +2,14 @@
 import { Lock, Message, EditPen } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import service from '@/utils/requests'
+import service from '@/utils/request'
 import router from '@/utils/router'
 import { setUserInfo } from '@/utils/store'
+import getRules from '@/utils/validator'
 
-const props = defineProps(['pageMode'])
-const pageMode = props.pageMode
+const isEmailValid = ref(false)
+const formRef = ref()
+const coldDownTime = ref(0)
 
 const form = reactive({
 	// username: '',
@@ -17,78 +19,13 @@ const form = reactive({
 	code: ''
 })
 
-// const validateUsername = (rule, value, callback) => {
-// 	if (value === '') {
-// 		callback(new Error('请输入用户名'))
-// 	} else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
-// 		callback(new Error('用户名只能包中文、英文和数字'))
-// 	} else {
-// 		callback()
-// 	}
-// }
-
-const ValidatePasswordAgain = (rule, value, callback) => {
-	if (value === '') {
-		callback(new Error('请再次输入密码'))
-	} else if (value !== form.password) {
-		callback(new Error('两次输入密码不一致'))
-	} else {
-		callback()
-	}
-}
-
-const rules = {
-	// username: [
-	// 	{ validator: validateUsername, trigger: ['blur', 'change'] },
-	// 	{
-	// 		min: 3,
-	// 		max: 20,
-	// 		message: '长度只能在 3 到 20 之间',
-	// 		trigger: ['blur', 'change']
-	// 	}
-	// ],
-	password: [
-		{ required: true, message: '请输入密码', trigger: ['change', 'blur'] },
-		{
-			min: 8,
-			max: 20,
-			message: '长度只能在 8 到 20 之间',
-			trigger: ['blur', 'change']
-		}
-	],
-	passwordAgain: [{ validator: ValidatePasswordAgain, trigger: ['blur', 'change'] }],
-	email: [
-		{
-			required: true,
-			message: '请输入邮箱地址',
-			trigger: ['blur', 'change']
-		},
-		{
-			type: 'email',
-			message: '请输入合法的邮件地址',
-			trigger: ['blur', 'change']
-		}
-	],
-	code: [
-		{
-			required: true,
-			message: '请输入验证码',
-			trigger: ['blur', 'change']
-		}
-	]
-}
-
-const isEmailValid = ref(false)
-const formRef = ref()
-const coldDownTime = ref(0)
-
-const onValidate = (prop, isValid) => {
+function onValidate(prop, isValid) {
 	if (prop === 'email') {
 		isEmailValid.value = isValid
 	}
 }
 
-const register = () => {
+function register() {
 	formRef.value.validate((isValid) => {
 		if (isValid) {
 			service
@@ -139,10 +76,12 @@ const register = () => {
 	})
 }
 
-const sendCode = () => {
+function sendCode() {
 	service
 		.post('/api/auth/send-register-code', {
-			data: form.email
+			data: {
+				email: form.email
+			}
 		})
 		.then(() => {
 			ElMessage.success('发送成功！')
@@ -158,7 +97,13 @@ const sendCode = () => {
 <template>
 	<div>
 		<h2 class="mb-6 text-2xl text-[#2a9a5b]">注册</h2>
-		<el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef" class="w-72">
+		<el-form
+			:model="form"
+			:rules="getRules(form)"
+			@validate="onValidate"
+			ref="formRef"
+			class="w-72"
+		>
 			<!--			<el-form-item prop="username">-->
 			<!--				<el-input-->
 			<!--					v-model="form.username"-->
@@ -183,7 +128,13 @@ const sendCode = () => {
 				</el-input>
 			</el-form-item>
 			<el-form-item prop="password">
-				<el-input :maxlength="16" v-model="form.password" placeholder="密码" type="password">
+				<el-input
+					:minlength="8"
+					:maxlength="20"
+					v-model="form.password"
+					placeholder="密码"
+					type="password"
+				>
 					<template #prefix>
 						<el-icon>
 							<Lock />
@@ -193,7 +144,8 @@ const sendCode = () => {
 			</el-form-item>
 			<el-form-item prop="passwordAgain">
 				<el-input
-					maxlength="16"
+					:minlength="8"
+					:maxlength="20"
 					v-model="form.passwordAgain"
 					placeholder="重复密码"
 					type="password"
@@ -207,8 +159,8 @@ const sendCode = () => {
 			</el-form-item>
 			<el-form-item prop="code">
 				<el-row :gutter="10">
-					<el-col :span="17">
-						<el-input maxlength="6" v-model="form.code" placeholder="验证码" type="text">
+					<el-col :span="15">
+						<el-input v-model="form.code" placeholder="验证码" type="text">
 							<template #prefix>
 								<el-icon>
 									<EditPen />
@@ -228,7 +180,7 @@ const sendCode = () => {
 				</el-row>
 			</el-form-item>
 		</el-form>
-		<el-button @click="register" color="#e6a23cff" plain class="w-24">立即注册 </el-button>
+		<el-button @click="register" color="#e6a23cff" plain class="w-24">立即注册</el-button>
 		<el-divider>
 			<span class="text-gray-400 text-xs">已有账号？</span>
 		</el-divider>

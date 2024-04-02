@@ -13,7 +13,7 @@ import {
 } from '@element-plus/icons-vue'
 import router, { toLogin } from '@/utils/router'
 import { useRoute } from 'vue-router'
-import service from '@/utils/requests'
+import service from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { resetUserInfo } from '@/utils/store'
 

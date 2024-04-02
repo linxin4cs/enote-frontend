@@ -2,8 +2,9 @@
 import { reactive, ref } from 'vue'
 import { EditPen, Message, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import service from '@/utils/requests'
+import service from '@/utils/request'
 import { toLogin } from '@/utils/router'
+import getRules from '@/utils/validator'
 
 const props = defineProps(['pageMode'])
 const pageMode = props.pageMode
@@ -22,58 +23,18 @@ const form = reactive({
 	code: ''
 })
 
-const ValidatePasswordAgain = (rule, value, callback) => {
-	if (value === '') {
-		callback(new Error('请再次输入密码'))
-	} else if (value !== form.password) {
-		callback(new Error('两次输入密码不一致'))
-	} else {
-		callback()
-	}
-}
-
-const rules = {
-	email: [
-		{
-			required: true,
-			message: '请输入邮箱地址',
-			trigger: ['blur', 'change']
-		},
-		{
-			type: 'email',
-			message: '请输入合法的邮件地址',
-			trigger: ['blur', 'change']
-		}
-	],
-	code: [
-		{
-			required: true,
-			message: '请输入验证码',
-			trigger: ['blur', 'change']
-		}
-	],
-	password: [
-		{ required: true, message: '请输入密码', trigger: ['change', 'blur'] },
-		{
-			min: 8,
-			max: 20,
-			message: '长度只能在 8 到 20 之间',
-			trigger: ['blur', 'change']
-		}
-	],
-	passwordAgain: [{ validator: ValidatePasswordAgain, trigger: ['blur', 'change'] }]
-}
-
-const onValidate = (prop, isValid) => {
+function onValidate(prop, isValid) {
 	if (prop === 'email') {
 		isEmailValid.value = isValid
 	}
 }
 
-const sendCode = () => {
+function sendCode() {
 	service
 		.post('/api/auth/send-reset-code', {
-			data: form.email
+			data: {
+				email: form.email
+			}
 		})
 		.then(() => {
 			ElMessage.success('发送成功！')
@@ -85,7 +46,7 @@ const sendCode = () => {
 		})
 }
 
-const validateResetCode = () => {
+function validateResetCode() {
 	formRef1.value.validate((valid) => {
 		if (valid) {
 			service
@@ -107,12 +68,14 @@ const validateResetCode = () => {
 	})
 }
 
-const resetPassword = () => {
+function resetPassword() {
 	formRef2.value.validate((valid) => {
 		if (valid) {
 			service
 				.post('/api/auth/reset-password', {
-					data: form.password
+					data: {
+						password: form.password
+					}
 				})
 				.then(() => {
 					ElMessage.success('重置成功')
@@ -143,7 +106,13 @@ const resetPassword = () => {
 		<transition name="el-fade-in-linear" mode="out-in">
 			<div v-if="active === 0">
 				<div class="mt-2 mb-6 text-2xl">重置密码</div>
-				<el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef1" class="w-72">
+				<el-form
+					:model="form"
+					:rules="getRules(form)"
+					@validate="onValidate"
+					ref="formRef1"
+					class="w-72"
+				>
 					<el-form-item prop="email">
 						<el-input v-model="form.email" placeholder="邮箱" type="text">
 							<template #prefix>
@@ -155,8 +124,8 @@ const resetPassword = () => {
 					</el-form-item>
 					<el-form-item prop="code">
 						<el-row :gutter="10">
-							<el-col :span="17">
-								<el-input maxlength="6" v-model="form.code" placeholder="验证码" type="text">
+							<el-col :span="15">
+								<el-input v-model="form.code" placeholder="验证码" type="text">
 									<template #prefix>
 										<el-icon>
 											<EditPen />
@@ -189,9 +158,21 @@ const resetPassword = () => {
 			<div v-else-if="active === 1">
 				<div class="mt-2 mb-1 text-2xl">重置密码</div>
 				<div class="text-sm text-gray-400 mb-6">请填写您的新密码，务必牢记，防止丢失</div>
-				<el-form :model="form" :rules="rules" @validate="onValidate" class="w-72" ref="formRef2">
+				<el-form
+					:model="form"
+					:rules="getRules(form)"
+					@validate="onValidate"
+					class="w-72"
+					ref="formRef2"
+				>
 					<el-form-item prop="password">
-						<el-input :maxlength="16" v-model="form.password" placeholder="密码" type="password">
+						<el-input
+							:minlength="8"
+							:maxlength="20"
+							v-model="form.password"
+							placeholder="密码"
+							type="password"
+						>
 							<template #prefix>
 								<el-icon>
 									<Lock />
@@ -201,7 +182,8 @@ const resetPassword = () => {
 					</el-form-item>
 					<el-form-item prop="passwordAgain">
 						<el-input
-							maxlength="16"
+							:minlength="8"
+							:maxlength="20"
 							v-model="form.passwordAgain"
 							placeholder="重复密码"
 							type="password"
