@@ -10,20 +10,20 @@ const props = defineProps(['pageMode'])
 const pageMode = props.pageMode
 
 const form = reactive({
-	username: '',
+	email: '',
 	password: '',
 	remember: false
 })
 
 function login() {
-	if (!form.username || !form.password) {
+	if (!form.email || !form.password) {
 		ElMessage.warning('请填写用户名和密码！')
 	} else {
 		service
 			.post(
 				'/api/auth/login',
 				{
-					username: form.username,
+					username: form.email,
 					password: form.password,
 					remember: form.remember
 				},
@@ -41,18 +41,18 @@ function login() {
 						if (userInfo.role === 1 || userInfo.role === 2) {
 							setUserInfo(userInfo)
 							router.push('/admin/dashboard')
-							ElMessage.success('登录成功')
+							ElMessage.success('登录成功!')
 							return
 						} else if (userInfo.role === 0) {
 							toLogin()
-							ElMessage.error('没有管理员权限')
+							ElMessage.error('没有管理员权限!')
 							return
 						}
 					}
 
 					setUserInfo(userInfo)
 					router.push('/')
-					ElMessage.success('登录成功')
+					ElMessage.success('登录成功!')
 				})
 			})
 			.catch((error) => {
@@ -70,7 +70,7 @@ function login() {
 		</h2>
 		<!--		<div>测试内容</div>-->
 		<div class="w-72 mb-2">
-			<el-input v-model="form.username" type="text" placeholder="邮箱">
+			<el-input v-model="form.email" type="text" placeholder="邮箱">
 				<template #prefix>
 					<el-icon>
 						<Message />

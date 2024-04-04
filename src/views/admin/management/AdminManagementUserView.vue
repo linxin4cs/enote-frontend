@@ -1,54 +1,109 @@
 <script setup>
-import { reactive, ref, computed } from 'vue'
-import { ElMessageBox } from 'element-plus'
+import { reactive, ref, computed, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { ROLE_LIST, STATUS_LIST } from '@/utils/constant'
+import service from '@/utils/request'
+import { formatDate } from '@/utils/format'
+import getRules from '@/utils/validator'
 
-const users = [
-	{
-		uid: '0781e07c-336b-48b2-bf19-88084487a733',
-		username: '一起仗剑走天涯去吧',
-		email: '1650349707@gmail.com',
-		status: 1,
-		role: 1,
-		createdTime: '2021-08-01 12:00:00'
-	},
-	{
-		uid: '1',
-		username: '企鹅守护者',
-		email: '1650349707@gmail.com',
-		status: 1,
-		role: 2,
-		createdTime: '2021-08-01 12:00:00'
-	},
-	{
-		uid: '1',
-		username: '张林鑫',
-		email: '1650349707@gmail.com',
-		status: 1,
-		role: 0,
-		createdTime: '2021-08-01 12:00:00'
-	},
-	{
-		uid: '1',
-		username: 'admin',
-		email: '1650349707@gmail.com',
-		status: 0,
-		role: 0,
-		createdTime: '2021-08-01 12:00:00'
-	}
-]
+onMounted(() => {
+	fetchUsers()
+})
 
+// const users = [
+// 	{
+// 		id: '0781e07c-336b-48b2-bf19-88084487a733',
+// 		name: '一起仗剑走天涯去吧',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 1,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '企鹅守护者',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 2,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	},
+// 	{
+// 		id: '1',
+// 		name: '张林鑫',
+// 		email: '1650349707@gmail.com',
+// 		status: 1,
+// 		role: 0,
+// 		createdAt: '2021-08-01 12:00:00'
+// 	}
+// ]
 const tableRef = ref(null)
-const total = ref(1000)
-const removeUids = ref([])
-const queryConditions = reactive({
+const users = ref([])
+const totalItems = ref(1000)
+const removeIdList = ref([])
+const query = reactive({
 	keyword: '',
-	status: '',
-	role: '',
 	dateRange: '',
-	pageNum: 1,
+	currentPage: 1,
 	pageSize: 10
 })
+
+const dialogFormRef = ref()
 const dialogSetting = reactive({
 	visible: false,
 	type: '',
@@ -56,47 +111,97 @@ const dialogSetting = reactive({
 })
 
 const dialogData = reactive({
-	uid: '',
-	username: '',
+	id: '',
+	name: '',
 	email: '',
-	password: '',
 	role: '',
 	status: '',
-	createdTime: '',
+	createdAt: '',
 	storageUsage: ''
 })
 
 const dialogClass = computed(() => {
 	if (dialogSetting.type === 'detail') {
-		return 'min-w-72 max-w-[42rem]'
+		return 'min-w-72 max-w-[40rem]'
 	}
 
 	return 'min-w-72 max-w-96'
 })
 
-function getDialogUserInfo(type, uid) {
-	const index = users.findIndex((item) => item.uid === uid)
-	dialogData.uid = uid
-	dialogData.username = users[index].username
-	dialogData.email = users[index].email
-	dialogData.role = ROLE_LIST[users[index].role]
-	dialogData.status = STATUS_LIST[users[index].status]
+function resetQuery() {
+	query.keyword = ''
+	query.dateRange = ''
+	fetchUsers().then(() => {
+		ElMessage.success('重置成功！')
+	})
+}
+
+function onSearchClick() {
+	fetchUsers().then(() => {
+		ElMessage.success('搜索成功！')
+	})
+}
+
+function handleCurrentChange(newPage) {
+	query.currentPage = newPage
+	fetchUsers()
+}
+
+function fetchUsers() {
+	return service
+		.post('/api/admin/manage/user/list', {
+			data: {
+				page: query.currentPage,
+				size: query.pageSize,
+				query: {
+					keyword: query.keyword,
+					createdAtStart: query.dateRange[0],
+					createdAtEnd: query.dateRange[1]
+				}
+			}
+		})
+		.then((res) => {
+			const rawUsers = res.data.list
+			users.value = rawUsers.map((item) => {
+				return {
+					id: item.id,
+					name: item.name,
+					email: item.email,
+					status: item.status,
+					role: item.role,
+					createdAt: formatDate(item.createdAt)
+				}
+			})
+
+			totalItems.value = res.data.totalItems
+		})
+		.catch((error) => {
+			ElMessage.error(error.data.message)
+		})
+}
+
+function setDialogUserInfo(type, user) {
+	dialogData.id = user.id
+	dialogData.name = user.name
+	dialogData.email = user.email
+	dialogData.role = ROLE_LIST[user.role]
+	dialogData.status = user.status
 
 	if (type === 'detail') {
-		dialogData.createdTime = users[index].createdTime
+		dialogData.createdAt = user.createdAt
 		dialogData.storageUsage = '149.53 MB'
 	}
 }
 
-function openDialog(type, uid) {
+function openDialog(type, user) {
 	dialogSetting.visible = true
 
 	if (type === 'edit') {
 		dialogSetting.type = 'edit'
 		dialogSetting.title = '编辑用户'
 
-		// 根据 uid 获取用户信息
-		getDialogUserInfo('edit', uid)
+		// 根据 id 获取用户信息
+		setDialogUserInfo('edit', user)
 	} else if (type === 'new') {
 		dialogSetting.type = 'new'
 		dialogSetting.title = '新增用户'
@@ -104,35 +209,100 @@ function openDialog(type, uid) {
 		dialogSetting.type = 'detail'
 		dialogSetting.title = '用户详情'
 
-		// 根据 uid 获取用户信息
-		getDialogUserInfo('detail', uid)
+		// 根据 id 获取用户信息
+		setDialogUserInfo('detail', user)
 	}
+}
+
+function saveDialogData() {
+	dialogFormRef.value.validate((isValid) => {
+		if (isValid) {
+			if (dialogSetting.type === 'new') {
+				addUser()
+			} else if (dialogSetting.type === 'edit') {
+				const userList = [...users.value]
+				const originalData = userList.find((item) => item.id === dialogData.id)
+				if (
+					originalData.name === dialogData.name &&
+					originalData.email === dialogData.email &&
+					originalData.role === ROLE_LIST.indexOf(dialogData.role) &&
+					originalData.status === dialogData.status
+				) {
+					ElMessage.warning('未修改任何信息')
+				} else {
+					editUser()
+				}
+			}
+		} else {
+			ElMessage.warning('请正确填写信息')
+		}
+	})
+}
+
+function addUser() {
+	service
+		.post('/api/admin/manage/user/new', {
+			data: {
+				email: dialogData.email,
+				role: ROLE_LIST.indexOf(dialogData.role),
+				status: dialogData.status
+			}
+		})
+		.then(() => {
+			fetchUsers()
+			ElMessage.success('新建成功！')
+			dialogSetting.visible = false
+		})
+		.catch((error) => {
+			ElMessage.error(error.data.message)
+		})
+}
+
+function editUser() {
+	service
+		.post('/api/admin/manage/user/edit', {
+			data: {
+				id: dialogData.id,
+				newEmail: dialogData.email,
+				newName: dialogData.name,
+				newRole: ROLE_LIST.indexOf(dialogData.role),
+				newStatus: dialogData.status
+			}
+		})
+		.then(() => {
+			fetchUsers()
+			ElMessage.success('修改成功！')
+			dialogSetting.visible = false
+		})
+		.catch((error) => {
+			ElMessage.error(error.data.message)
+		})
 }
 
 function handleDialogClosed() {
 	dialogSetting.type = ''
 	dialogSetting.title = ''
 
-	dialogData.uid = ''
-	dialogData.username = ''
+	dialogData.id = ''
+	dialogData.name = ''
 	dialogData.email = ''
 	dialogData.password = ''
 	dialogData.role = ''
 	dialogData.status = ''
-	dialogData.createdTime = ''
+	dialogData.createdAt = ''
 	dialogData.storageUsage = ''
 }
 
 function handleSelectionChange(selection) {
-	removeUids.value = selection.map((item) => item.uid)
+	removeIdList.value = selection.map((item) => item.id)
 }
 
-function handleDelete(type, row) {
+function handleDeleteClick(type, row) {
 	let message = ''
 	if (type === 'selection') {
-		message = `确定删除选中的 ${removeUids.value.length} 个用户？`
+		message = `确定删除选中的 ${removeIdList.value.length} 个用户？`
 	} else if (type === 'single') {
-		message = `确定删除用户 "${row.username}" ？`
+		message = `确定删除用户 "${row.name}" ？`
 	}
 
 	ElMessageBox.alert('This is a message', 'Title', {
@@ -141,19 +311,45 @@ function handleDelete(type, row) {
 		message: message,
 		confirmButtonText: '确定',
 		showCancelButton: true,
-		cancelButtonText: '取消'
+		cancelButtonText: '取消',
+		beforeClose: (action, instance, done) => {
+			if (action === 'confirm') {
+				if (type === 'selection') {
+					deleteUsers(removeIdList.value)
+				} else if (type === 'single') {
+					deleteUsers([row.id])
+				}
+			}
+
+			tableRef.value.clearSelection()
+			removeIdList.value = []
+
+			done()
+		}
 	})
+}
+
+function deleteUsers(ids) {
+	service
+		.post('/api/admin/manage/user/delete', {
+			data: {
+				ids: ids
+			}
+		})
+		.then(() => {
+			fetchUsers()
+			ElMessage.success('删除成功！')
+		})
+		.catch((error) => {
+			ElMessage.error(error.data.message)
+		})
 }
 </script>
 
 <template>
 	<div class="flex flex-col gap-2">
 		<div class="flex flex-wrap items-center flex-row gap-2 border rounded p-4">
-			<el-input
-				placeholder="UID / 用户名 / 邮箱"
-				class="max-w-48"
-				v-model="queryConditions.keyword"
-			/>
+			<el-input placeholder="ID / 用户名 / 邮箱" class="max-w-48" v-model="query.keyword" />
 			<!--			<el-select placeholder="全部" class="max-w-20" v-model="queryConditions.status">-->
 			<!--				<el-option label="启用" value="1" />-->
 			<!--				<el-option label="禁用" value="0" />-->
@@ -169,12 +365,12 @@ function handleDelete(type, row) {
 				start-placeholder="开始时间"
 				end-placeholder="截止时间"
 				value-format="YYYY-MM-DD"
-				v-model="queryConditions.dateRange"
+				v-model="query.dateRange"
 				class="max-w-64"
 			/>
 			<div class="flex flex-row items-center">
-				<el-button color="#2a9a5b">搜索</el-button>
-				<el-button>重置</el-button>
+				<el-button color="#2a9a5b" @click="onSearchClick">搜索</el-button>
+				<el-button @click="resetQuery">重置</el-button>
 			</div>
 		</div>
 
@@ -185,8 +381,8 @@ function handleDelete(type, row) {
 						<el-button type="primary" @click="openDialog('new')">新增</el-button>
 						<el-button
 							type="danger"
-							@click="handleDelete('selection')"
-							:disabled="removeUids.length === 0"
+							@click="handleDeleteClick('selection')"
+							:disabled="removeIdList.length === 0"
 							>删除</el-button
 						>
 					</div>
@@ -195,28 +391,30 @@ function handleDelete(type, row) {
 
 			<el-table :data="users" ref="tableRef" @selection-change="handleSelectionChange">
 				<el-table-column type="selection" width="28" align="center" />
-				<!--				<el-table-column key="uid" label="UID" align="left" prop="uid" width="100">-->
+				<!--				<el-table-column key="id" label="id" align="left" prop="id" width="100">-->
 				<!--					<template #default="scope">-->
-				<!--						<el-tooltip effect="dark" :content="scope.row.uid" placement="top-end">-->
-				<!--							<span class="cursor-pointer">{{ scope.row.uid.slice(0, 8) + '...' }}</span>-->
+				<!--						<el-tooltip effect="dark" :content="scope.row.id" placement="top-end">-->
+				<!--							<span class="cursor-pointer">{{ scope.row.id.slice(0, 8) + '...' }}</span>-->
 				<!--						</el-tooltip>-->
 				<!--					</template>-->
 				<!--				</el-table-column>-->
 				<el-table-column
-					key="uid"
-					label="UID"
+					key="id"
+					label="ID"
 					align="left"
-					prop="uid"
+					prop="id"
 					width="100"
 					show-overflow-tooltip
+					sortable
 				/>
 				<el-table-column
-					key="username"
+					key="name"
 					label="用户名"
 					align="left"
-					prop="username"
+					prop="name"
 					min-width="140"
 					show-overflow-tooltip
+					sortable
 				/>
 				<el-table-column
 					key="email"
@@ -225,6 +423,7 @@ function handleDelete(type, row) {
 					prop="email"
 					min-width="200"
 					show-overflow-tooltip
+					sortable
 				/>
 
 				<el-table-column
@@ -237,6 +436,7 @@ function handleDelete(type, row) {
 						{ text: '管理员', value: 1 },
 						{ text: '超级管理员', value: 2 }
 					]"
+					:filter-method="(value, row) => row.role === value"
 				>
 					<template #default="scope">
 						{{ ROLE_LIST[scope.row.role] }}
@@ -248,9 +448,10 @@ function handleDelete(type, row) {
 					prop="status"
 					width="70"
 					:filters="[
-						{ text: '活跃', value: 1 },
+						{ text: '启用', value: 1 },
 						{ text: '禁用', value: 0 }
 					]"
+					:filter-method="(value, row) => row.role === value"
 				>
 					<template #default="scope">
 						<el-tag :type="scope.row.status === 0 ? 'info' : 'success'">{{
@@ -259,21 +460,26 @@ function handleDelete(type, row) {
 					</template>
 				</el-table-column>
 				<el-table-column
-					key="createdTime"
+					key="createdAt"
 					label="创建时间"
 					align="left"
-					prop="createdTime"
+					prop="createdAt"
 					width="170"
+					sortable
 				/>
 				<el-table-column label="操作" width="138" align="center">
 					<template #default="scope">
-						<el-button type="success" size="small" link @click="openDialog('detail', scope.row.uid)"
+						<el-button type="success" size="small" link @click="openDialog('detail', scope.row)"
 							>详情</el-button
 						>
-						<el-button type="primary" link size="small" @click="openDialog('edit', scope.row.uid)"
+						<el-button type="primary" link size="small" @click="openDialog('edit', scope.row)"
 							>编辑</el-button
 						>
-						<el-button type="danger" link size="small" @click="handleDelete('single', scope.row)"
+						<el-button
+							type="danger"
+							link
+							size="small"
+							@click="handleDeleteClick('single', scope.row)"
 							>删除</el-button
 						>
 					</template>
@@ -283,10 +489,11 @@ function handleDelete(type, row) {
 			<el-pagination
 				class="mt-4 ml-[-0.5rem]"
 				layout="prev, pager, next"
-				v-if="total > 0"
-				v-model:total="total"
-				v-model:page="queryConditions.pageNum"
-				v-model:limit="queryConditions.pageSize"
+				v-if="totalItems > 0"
+				:total="totalItems"
+				@current-change="handleCurrentChange"
+				:current-page="query.currentPage"
+				:page-size="query.pageSize"
 			/>
 		</el-card>
 	</div>
@@ -298,55 +505,67 @@ function handleDelete(type, row) {
 		@closed="handleDialogClosed"
 		destroy-on-close
 	>
-		<!-- 用户新增/编辑表单 -->
-		<el-form
-			ref="userFormRef"
-			label-width="55px"
-			v-model="dialogData"
-			v-if="dialogSetting.type === 'new' || dialogSetting.type === 'edit'"
-		>
-			<el-form-item label="用户名" prop="username">
-				<el-input placeholder="请输入用户名" v-model="dialogData.username" />
-			</el-form-item>
+		<div v-if="dialogSetting.type === 'new' || dialogSetting.type === 'edit'">
+			<el-form
+				ref="dialogFormRef"
+				label-width="65px"
+				:model="dialogData"
+				:rules="getRules(dialogData)"
+			>
+				<el-form-item label="用户名" prop="name" v-if="dialogSetting.type === 'edit'">
+					<el-input placeholder="请输入用户名" v-model="dialogData.name" />
+				</el-form-item>
 
-			<el-form-item label="邮箱" prop="email" required>
-				<el-input placeholder="请输入邮箱" v-model="dialogData.email" />
-			</el-form-item>
-			<el-form-item label="密码" prop="password" v-if="dialogSetting.type === 'new'">
-				<el-input placeholder="请输入密码" v-model="dialogData.password" />
-			</el-form-item>
+				<el-form-item label="邮箱" prop="email">
+					<el-input placeholder="请输入邮箱" v-model="dialogData.email" />
+				</el-form-item>
+				<!--			<el-form-item label="密码" prop="password" v-if="dialogSetting.type === 'new'">-->
+				<!--				<el-input placeholder="请输入密码" v-model="dialogData.password" />-->
+				<!--			</el-form-item>-->
 
-			<el-form-item label="角色" prop="role" required>
-				<el-select placeholder="请选择" v-model="dialogData.role">
-					<el-option v-for="(item, index) in ROLE_LIST" :key="index" :label="item" :value="item" />
-				</el-select>
-			</el-form-item>
+				<el-form-item label="角色" prop="role" v-if="dialogSetting.type === 'edit'">
+					<el-select placeholder="请选择" v-model="dialogData.role">
+						<el-option v-for="(item, index) in ROLE_LIST" :key="index" :value="ROLE_LIST[index]" />
+					</el-select>
+				</el-form-item>
 
-			<el-form-item label="状态" prop="status">
-				<el-radio-group v-model="dialogData.status">
-					<el-radio v-for="(item, index) in STATUS_LIST" :key="index" :value="index">{{
-						item
-					}}</el-radio>
-				</el-radio-group>
-			</el-form-item>
-		</el-form>
+				<el-form-item label="状态" prop="status" v-if="dialogSetting.type === 'edit'">
+					<el-radio-group v-model="dialogData.status">
+						<el-radio v-for="(item, index) in STATUS_LIST" :key="index" :value="index">{{
+							item
+						}}</el-radio>
+					</el-radio-group>
+				</el-form-item>
+			</el-form>
+			<el-divider v-if="dialogSetting.type === 'new'"></el-divider>
+			<div v-if="dialogSetting.type === 'new'">
+				<div class="font-bold">以下为默认信息：</div>
+				<div class="ml-6 text-gray-500">
+					<div>用户名：随机生成</div>
+					<div>密码：enotepwd</div>
+					<div>角色：普通用户</div>
+					<div>状态：禁用</div>
+				</div>
+			</div>
+		</div>
+		<!-- 用户新增/编辑/详情表单 -->
 
 		<el-descriptions :column="2" border v-else-if="dialogSetting.type === 'detail'">
-			<el-descriptions-item label="UID">{{ dialogData.uid }} </el-descriptions-item>
-			<el-descriptions-item label="用户名"> {{ dialogData.username }} </el-descriptions-item>
+			<el-descriptions-item label="id">{{ dialogData.id }}</el-descriptions-item>
+			<el-descriptions-item label="用户名"> {{ dialogData.name }}</el-descriptions-item>
 			<el-descriptions-item label="邮箱"> {{ dialogData.email }} </el-descriptions-item>
 			<el-descriptions-item label="角色"> {{ dialogData.role }} </el-descriptions-item>
 			<el-descriptions-item label="状态">
-				{{ dialogData.status }}
+				{{ STATUS_LIST[dialogData.status] }}
 			</el-descriptions-item>
-			<el-descriptions-item label="创建时间"> {{ dialogData.createdTime }} </el-descriptions-item>
+			<el-descriptions-item label="创建时间"> {{ dialogData.createdAt }} </el-descriptions-item>
 			<el-descriptions-item label="存储用量"> {{ dialogData.storageUsage }} </el-descriptions-item>
 		</el-descriptions>
 
 		<!-- 弹窗底部操作按钮 -->
 		<template #footer v-if="dialogSetting.type !== 'detail'">
 			<div class="dialog-footer">
-				<el-button type="primary">确定</el-button>
+				<el-button type="primary" @click="saveDialogData" color="#2a9a5b">确定</el-button>
 				<el-button @click="dialogSetting.visible = false">取消</el-button>
 			</div>
 		</template>

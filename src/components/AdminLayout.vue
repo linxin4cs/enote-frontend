@@ -15,7 +15,7 @@ import router, { toLogin } from '@/utils/router'
 import { useRoute } from 'vue-router'
 import service from '@/utils/request'
 import { ElMessage } from 'element-plus'
-import { resetUserInfo } from '@/utils/store'
+import useStore, { resetUserInfo } from '@/utils/store'
 
 const PAGES = {
 	AdminDashboardView: [
@@ -61,6 +61,9 @@ const PAGES = {
 		}
 	]
 }
+
+const store = useStore()
+
 const route = useRoute()
 const activePageRoutes = ref([])
 const isCollapse = ref(true)
@@ -111,19 +114,21 @@ function logout() {
 <template>
 	<!--	bg-[#f5f7f9ff]-->
 	<el-container class="h-screen bg-white">
-		<el-header class="bg-white flex items-center justify-between border-b-2">
+		<el-header class="bg-white flex items-center justify-between border-b-2 w-screen">
 			<div class="flex items-center">
 				<span class="flex text-lg mx-1 hover:cursor-pointer">
 					<el-icon v-if="isExpandIcon" @click="() => handleCollapse('expand')"><Expand /></el-icon
 					><el-icon v-else @click="() => handleCollapse('fold')"><Fold /></el-icon>
 				</span>
 				<RouterLink to="/admin">
-					<h2 class="text-2xl text-[#2a9a5b] ml-1">ENote 后台管理</h2>
+					<h2 class="text-2xl text-[#2a9a5b] ml-1 text-nowrap">ENote 后台管理</h2>
 				</RouterLink>
 			</div>
 			<el-dropdown>
 				<div class="flex items-center text-black text-base hover:text-[#2a9a5b]">
-					<span class="text-gray-700">张林鑫</span>
+					<span class="text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-36">{{
+						store.userInfo.name
+					}}</span>
 					<el-icon class="ml-1.5 mt-0.5">
 						<setting />
 					</el-icon>

@@ -41,6 +41,20 @@ function getRules(form) {
 			}
 		],
 		passwordAgain: [{ validator: ValidatePasswordAgain, trigger: ['blur', 'change'] }],
+		role: [
+			{
+				required: true,
+				message: '请选择角色',
+				trigger: ['blur', 'change']
+			}
+		],
+		status: [
+			{
+				required: true,
+				message: '请选择状态',
+				trigger: ['blur', 'change']
+			}
+		],
 		email: [
 			{
 				required: true,

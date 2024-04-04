@@ -47,12 +47,10 @@ service.interceptors.response.use(
 		return Promise.reject({ code, data } || 'Error')
 	},
 	(error) => {
-		console.log(error)
-
 		if (!error.data) {
 			error.data = {
-				code: error.response.status,
-				message: error.message
+				code: error.response.data.code,
+				message: error.response.data.data.message
 			}
 		}
 

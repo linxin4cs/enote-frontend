@@ -214,7 +214,7 @@ handelRefreshService()
 						<li>音频</li>
 					</ul>
 				</li>
-				<li>等其他文件</li>
+				<!--				<li>等其他文件</li>-->
 			</ul>
 			<el-divider border-style="dashed" />
 			<p class="font-bold">

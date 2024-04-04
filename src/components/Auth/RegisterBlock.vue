@@ -3,7 +3,7 @@ import { Lock, Message, EditPen } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import service from '@/utils/request'
-import router from '@/utils/router'
+import router, { toLogin } from '@/utils/router'
 import { setUserInfo } from '@/utils/store'
 import getRules from '@/utils/validator'
 
@@ -42,7 +42,7 @@ function register() {
 
 					service
 						.post(
-							'/auth/login',
+							'/api/auth/login',
 							{
 								username: form.email,
 								password: form.password,
@@ -60,7 +60,7 @@ function register() {
 
 								setUserInfo(userInfo)
 								router.push('/')
-								ElMessage.success('登录成功')
+								ElMessage.success('登录成功！')
 							})
 						})
 						.catch((error) => {
@@ -71,7 +71,7 @@ function register() {
 					ElMessage.error(error.data.message)
 				})
 		} else {
-			ElMessage.warning('请填写完整信息')
+			ElMessage.warning('请正确填写信息')
 		}
 	})
 }

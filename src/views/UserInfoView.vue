@@ -152,7 +152,7 @@ function handleSaveInfo() {
 					ElMessage.error(error.data.message)
 				})
 		} else {
-			ElMessage.warning('请填写完整信息')
+			ElMessage.warning('请正确填写信息')
 		}
 	})
 }
@@ -211,7 +211,7 @@ function handleSaveEmail() {
 					ElMessage.error(error.data.message)
 				})
 		} else {
-			ElMessage.warning('请填写完整信息')
+			ElMessage.warning('请正确填写信息')
 		}
 	})
 }
@@ -248,7 +248,7 @@ function handleSavePassword() {
 					ElMessage.error(error.data.message)
 				})
 		} else {
-			ElMessage.warning('请填写完整信息')
+			ElMessage.warning('请正确填写信息')
 		}
 	})
 }
