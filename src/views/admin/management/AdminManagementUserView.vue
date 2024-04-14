@@ -337,8 +337,8 @@ function deleteUsers(ids) {
 			}
 		})
 		.then(() => {
-			fetchUsers()
 			ElMessage.success('删除成功！')
+			fetchUsers()
 		})
 		.catch((error) => {
 			ElMessage.error(error.data.message)
