@@ -1,8 +1,8 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 import defaultAvatar from '@/assets/default_avatar.png'
-import { User, Message, Lock, EditPen } from '@element-plus/icons-vue'
+import { EditPen, Lock, Message, User } from '@element-plus/icons-vue'
 import useStore, { setUserInfo } from '@/utils/store'
 import { formatDate } from '@/utils/format'
 import { PICTURE_TYPE_LIST, ROLE_LIST } from '@/utils/constant'
@@ -92,14 +92,19 @@ function handleAvatarUploadExceed(files) {
 }
 
 function handleAvatarUploadSuccess(res) {
-	ElMessage.success('上传成功！')
-	store.userInfo.avatar = res.data.data.avatar
-	avatarUploadStatus.value = AVATAR_UPLOAD_STATUS.SUCCESS
-	avatarUploadDialogVisible.value = false
+	if (res.code === 200) {
+		ElMessage.success('上传成功！')
+		store.userInfo.avatar = res.data.data.avatar
+		avatarUploadStatus.value = AVATAR_UPLOAD_STATUS.SUCCESS
+		avatarUploadDialogVisible.value = false
+	} else {
+		ElMessage.error(res.data.message)
+		avatarUploadStatus.value = AVATAR_UPLOAD_STATUS.READY
+	}
 }
 
 function handleAvatarUploadError() {
-	avatarUploadStatus.value = AVATAR_UPLOAD_STATUS.ready
+	avatarUploadStatus.value = AVATAR_UPLOAD_STATUS.READY
 	ElMessage.error('上传失败！')
 }
 
@@ -228,6 +233,7 @@ function sendPasswordCode() {
 			ElMessage.error(error.data.message)
 		})
 }
+
 function handleSavePassword() {
 	passwordFormRef.value.validate((isValid) => {
 		if (isValid) {
@@ -275,7 +281,6 @@ function handleSavePassword() {
 			:on-error="handleAvatarUploadError"
 			:on-progress="handleAvatarUploadProgress"
 			ref="avatarUploadRef"
-			accept="image/jpeg,image/jpg,image/png,image/webp"
 			name="files"
 			with-credentials
 		>
@@ -313,15 +318,13 @@ function handleSavePassword() {
 						avatarUploadList.length === 0 || avatarUploadStatus === AVATAR_UPLOAD_STATUS.UPLOADING
 					"
 					@click="saveAvatar"
-					>{{
-						avatarUploadStatus === AVATAR_UPLOAD_STATUS.UPLOADING ? '上传中' : '确定'
-					}}</el-button
-				>
+					>{{ avatarUploadStatus === AVATAR_UPLOAD_STATUS.UPLOADING ? '上传中' : '确定' }}
+				</el-button>
 			</el-tooltip>
 		</template>
 	</el-dialog>
 	<div class="flex flex-wrap gap-2 items-start">
-		<el-card class="pb-6" shadow="hover">
+		<el-card class="pb-6 max-w-96" shadow="hover">
 			<template #header>
 				<div class="card-header flex justify-between items-center">
 					<span class="text-lg font-bold">个人信息</span>
@@ -341,7 +344,7 @@ function handleSavePassword() {
 				<div class="text-[#4a4b4eff]">
 					<div class="flex justify-between">
 						<span class="mr-12">ID</span>
-						<span>{{ store.userInfo.id }}</span>
+						<span class="text-right">{{ store.userInfo.id }}</span>
 					</div>
 					<el-divider />
 					<div class="flex justify-between">
@@ -364,7 +367,7 @@ function handleSavePassword() {
 		<el-card shadow="hover">
 			<el-tabs stretch class="mt-[-0.5rem]" v-model="tabActive" @tabChange="handleTabChange">
 				<el-tab-pane name="info">
-					<template #label> <span class="hover:text-[#2a9a5b] text-lg">修改信息</span> </template>
+					<template #label><span class="hover:text-[#2a9a5b] text-lg">修改信息</span></template>
 					<el-form
 						label-width="auto"
 						:model="infoForm"
@@ -398,13 +401,13 @@ function handleSavePassword() {
 								color="#2a9a5b"
 								@click="handleSaveInfo"
 								:disabled="infoForm.name === store.userInfo.name || infoForm.name === ''"
-								>保存</el-button
-							>
+								>保存
+							</el-button>
 						</el-tooltip>
 					</div>
 				</el-tab-pane>
 				<el-tab-pane name="email">
-					<template #label> <span class="hover:text-[#2a9a5b] text-lg">修改邮箱</span> </template>
+					<template #label><span class="hover:text-[#2a9a5b] text-lg">修改邮箱</span></template>
 					<el-form
 						label-width="auto"
 						:model="emailForm"
@@ -522,13 +525,13 @@ function handleSavePassword() {
 									emailForm.oldEmailCode === '' ||
 									emailForm.newEmailCode === ''
 								"
-								>保存</el-button
-							>
+								>保存
+							</el-button>
 						</el-tooltip>
 					</div>
 				</el-tab-pane>
 				<el-tab-pane name="password">
-					<template #label> <span class="hover:text-[#2a9a5b] text-lg">修改密码</span></template>
+					<template #label><span class="hover:text-[#2a9a5b] text-lg">修改密码</span></template>
 					<el-form
 						label-width="auto"
 						:model="passwordForm"
@@ -620,8 +623,8 @@ function handleSavePassword() {
 								color="#2a9a5b"
 								@click="handleSavePassword"
 								:disabled="passwordForm.password === '' || passwordForm.code === ''"
-								>保存</el-button
-							>
+								>保存
+							</el-button>
 						</el-tooltip>
 					</div>
 				</el-tab-pane>
