@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 const useStore = defineStore('store', () => {
 	const userInfo = reactive({
-		id: 0,
+		id: '',
 		email: '',
 		name: '',
 		role: 0,
@@ -20,7 +20,7 @@ const useStore = defineStore('store', () => {
 function resetUserInfo() {
 	const store = useStore()
 
-	store.userInfo.id = 0
+	store.userInfo.id = ''
 	store.userInfo.email = ''
 	store.userInfo.name = ''
 	store.userInfo.role = 0

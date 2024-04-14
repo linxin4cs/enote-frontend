@@ -236,7 +236,7 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 	if (to.name) {
-		if (store.userInfo.id === 0) {
+		if (store.userInfo.id === '') {
 			if (!to.name.startsWith('AdminAuth') && to.name.startsWith('Admin')) {
 				ElMessage.error('没有权限，请登录！')
 				next('/admin/auth/login')
