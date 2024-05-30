@@ -172,6 +172,7 @@ function resetPassword() {
 							v-model="form.password"
 							placeholder="密码"
 							type="password"
+							show-password
 						>
 							<template #prefix>
 								<el-icon>
@@ -187,6 +188,7 @@ function resetPassword() {
 							v-model="form.passwordAgain"
 							placeholder="重复密码"
 							type="password"
+							show-password
 						>
 							<template #prefix>
 								<el-icon>

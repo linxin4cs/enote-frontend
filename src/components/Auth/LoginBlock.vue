@@ -79,7 +79,7 @@ function login() {
 			</el-input>
 		</div>
 		<div class="w-72">
-			<el-input v-model="form.password" type="password" placeholder="密码">
+			<el-input v-model="form.password" type="password" placeholder="密码" show-password>
 				<template #prefix>
 					<el-icon>
 						<Lock />

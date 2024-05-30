@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, watchEffect } from 'vue'
 
 import { Chart } from '@antv/g2'
-import DashboardDataCard from '@/components/Admin/DashboardDataCard.vue'
+import DashboardDataCard from '@/components/admin/DashboardDataCard.vue'
 import service from '@/utils/request'
 
 onMounted(() => {
@@ -389,7 +389,7 @@ function fetchUsageData() {
 				<DashboardDataCard
 					:data="activeNote"
 					title="日活跃笔记"
-					tooltip="一天内被创建、编辑、删除的笔记数"
+					tooltip="一天内被创建、编辑的笔记数"
 				/>
 			</div>
 			<el-divider />

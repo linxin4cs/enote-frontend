@@ -1,16 +1,18 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import {
-	WarningFilled,
+	CircleCloseFilled,
+	CloseBold,
+	CopyDocument,
 	Edit,
 	Loading,
-	CopyDocument,
 	Select,
 	SuccessFilled,
-	CircleCloseFilled,
-	CloseBold
+	WarningFilled
 } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
 
 const PROGRESS_STATUS = {
 	loading: {
@@ -39,7 +41,7 @@ const isConfirmBackupDownloadInfo = ref(false)
 
 // loading, success, fail
 const backupStatus = ref('loading')
-const failReason = ref('')
+const failReason = ref('系统无足够空间用于存储备份文件！')
 
 const isAllServicesOnline = computed(() => {
 	return (
@@ -61,21 +63,27 @@ function handleRefreshService() {
 		serviceStatus.mongodb = 'online'
 		serviceStatus.redis = 'online'
 		serviceStatus.file = 'online'
-	}, 1000)
+	}, 1500)
 }
+
+const backupTimer = ref(-1)
 
 function handleStartBackup() {
 	activeStep.value = 1
 
-	setTimeout(() => {
-		backupStatus.value = 'loading'
-	}, 1000)
+	if (backupTimer.value !== -1) {
+		clearTimeout(backupTimer.value)
+	}
+
+	backupTimer.value = setTimeout(() => {
+		backupStatus.value = 'success'
+	}, 2500)
 }
 
 function handlePrevStep() {
 	activeStep.value = 0
 	backupStatus.value = 'loading'
-	// TODO 发送取消指令
+	clearTimeout(backupTimer.value)
 	handleRefreshService()
 }
 
@@ -88,14 +96,22 @@ function handleCancelBackup() {
 	})
 }
 
-function handleBackupDownload() {
+async function handleBackupDownload() {
 	isConfirmBackupDownloadInfo.value = false
 	isShowBackupDownloadInfo.value = false
+
+	const zip = new JSZip()
+	// 添加文件到ZIP中。这里只是示例，可以根据实际需要添加不同的文件和内容
+	zip.file('example.txt', '这是一个文本文件的内容')
+
+	// 生成ZIP文件并触发下载
+	const content = await zip.generateAsync({ type: 'blob' })
+	saveAs(content, 'backup.zip')
 }
 
 function handleShowFailReason() {
 	ElMessageBox.alert('This is a message', 'Title', {
-		title: '失败报错',
+		title: '失败信息',
 		autofocus: false,
 		message: failReason.value,
 		confirmButtonText: '已知晓'
@@ -109,7 +125,9 @@ handleRefreshService()
 	<el-dialog v-model="isShowBackupDownloadInfo" class="max-w-96">
 		<template #header>
 			<div class="flex items-center text-xl text-[#e04969]">
-				<el-icon><WarningFilled /></el-icon>
+				<el-icon>
+					<WarningFilled />
+				</el-icon>
 				<span class="ml-1 font-bold">注意</span>
 			</div>
 		</template>
@@ -131,8 +149,8 @@ handleRefreshService()
 					color="#2a9a5b"
 					:disabled="!isConfirmBackupDownloadInfo"
 					@click="handleBackupDownload"
-					>确定</el-button
-				>
+					>确定
+				</el-button>
 			</el-tooltip>
 		</template>
 	</el-dialog>
@@ -144,7 +162,9 @@ handleRefreshService()
 		<el-card class="max-w-[480px]" shadow="hover" v-if="activeStep === 0">
 			<template #header>
 				<div class="flex items-center text-xl text-[#e04969]">
-					<el-icon><WarningFilled /></el-icon>
+					<el-icon>
+						<WarningFilled />
+					</el-icon>
 					<span class="ml-1 font-bold">注意</span>
 				</div>
 			</template>
@@ -187,68 +207,72 @@ handleRefreshService()
 					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.mysql === 'online'"
 						><Select
 					/></el-icon>
-					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.mysql === 'offline'"
-						><CloseBold
-					/></el-icon>
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.mysql === 'offline'">
+						<CloseBold />
+					</el-icon>
 					<el-icon
 						color="#1f87e8ff"
 						class="is-loading mr-0.5"
 						v-else-if="serviceStatus.mysql === 'loading'"
-						><Loading
-					/></el-icon>
+					>
+						<Loading />
+					</el-icon>
 					MySQL
 				</li>
 				<li class="flex items-center">
 					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.mongodb === 'online'"
 						><Select
 					/></el-icon>
-					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.mongodb === 'offline'"
-						><CloseBold
-					/></el-icon>
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.mongodb === 'offline'">
+						<CloseBold />
+					</el-icon>
 					<el-icon
 						color="#1f87e8ff"
 						class="is-loading mr-0.5"
 						v-else-if="serviceStatus.mongodb === 'loading'"
-						><Loading
-					/></el-icon>
+					>
+						<Loading />
+					</el-icon>
 					MongoDB
 				</li>
 				<li class="flex items-center">
 					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.redis === 'online'"
 						><Select
 					/></el-icon>
-					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.redis === 'offline'"
-						><CloseBold
-					/></el-icon>
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.redis === 'offline'">
+						<CloseBold />
+					</el-icon>
 					<el-icon
 						color="#1f87e8ff"
 						class="is-loading mr-0.5"
 						v-else-if="serviceStatus.redis === 'loading'"
-						><Loading
-					/></el-icon>
+					>
+						<Loading />
+					</el-icon>
 					Redis
 				</li>
 				<li class="flex items-center">
 					<el-icon color="#2a9a5b" class="mr-0.5" v-if="serviceStatus.file === 'online'"
 						><Select
 					/></el-icon>
-					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.file === 'offline'"
-						><CloseBold
-					/></el-icon>
+					<el-icon color="#e04969" class="mr-0.5" v-else-if="serviceStatus.file === 'offline'">
+						<CloseBold />
+					</el-icon>
 					<el-icon
 						color="#1f87e8ff"
 						class="is-loading mr-0.5"
 						v-else-if="serviceStatus.file === 'loading'"
-						><Loading
-					/></el-icon>
+					>
+						<Loading />
+					</el-icon>
 					文件存储
 				</li>
 			</ul>
 			<template #footer>
 				<div class="flex justify-between">
 					<el-button type="primary" color="#2a9a5b" plain @click="handleRefreshService"
-						>刷新服务</el-button
-					>
+						>刷新服务
+					</el-button>
 					<el-tooltip
 						class="box-item"
 						effect="dark"
@@ -260,8 +284,8 @@ handleRefreshService()
 							color="#2a9a5b"
 							:disabled="!isAllServicesOnline"
 							@click="handleStartBackup"
-							>开始备份</el-button
-						>
+							>开始备份
+						</el-button>
 					</el-tooltip>
 				</div>
 			</template>
@@ -269,18 +293,24 @@ handleRefreshService()
 		<el-card class="max-w-[480px]" shadow="hover" v-else-if="activeStep === 1">
 			<template #header>
 				<div class="flex items-center text-xl text-[#1f87e8ff]" v-if="backupStatus === 'loading'">
-					<el-icon><WarningFilled /></el-icon>
+					<el-icon>
+						<WarningFilled />
+					</el-icon>
 					<span class="ml-1 font-bold">稍等</span>
 				</div>
 				<div
 					class="flex items-center text-xl text-[#2a9a5b]"
 					v-else-if="backupStatus === 'success'"
 				>
-					<el-icon><SuccessFilled /></el-icon>
+					<el-icon>
+						<SuccessFilled />
+					</el-icon>
 					<span class="ml-1 font-bold">备份完成</span>
 				</div>
 				<div class="flex items-center text-xl text-[#e04969]" v-else-if="backupStatus === 'fail'">
-					<el-icon><CircleCloseFilled /></el-icon>
+					<el-icon>
+						<CircleCloseFilled />
+					</el-icon>
 					<span class="ml-1 font-bold">备份失败</span>
 				</div>
 			</template>
@@ -309,8 +339,8 @@ handleRefreshService()
 				plain
 				@click="handleShowFailReason"
 				v-if="backupStatus === 'fail'"
-				>查看原因</el-button
-			>
+				>查看原因
+			</el-button>
 			<template #footer>
 				<div class="flex justify-between">
 					<el-button type="primary" color="#2a9a5b" @click="handlePrevStep">上一步</el-button>
@@ -319,8 +349,8 @@ handleRefreshService()
 						color="#e04969"
 						@click="handleCancelBackup"
 						v-if="backupStatus === 'loading'"
-						>取消</el-button
-					>
+						>取消
+					</el-button>
 					<el-tooltip
 						effect="dark"
 						:content="backupStatus === 'loading' ? '请等待备份完成' : '请重新进行备份'"
@@ -336,8 +366,8 @@ handleRefreshService()
 									isConfirmBackupDownloadInfo = false
 								}
 							"
-							>下载备份</el-button
-						>
+							>下载备份
+						</el-button>
 					</el-tooltip>
 				</div>
 			</template>
@@ -349,6 +379,7 @@ handleRefreshService()
 li {
 	margin-bottom: 0.2rem;
 }
+
 .el-steps {
 	background: none;
 }

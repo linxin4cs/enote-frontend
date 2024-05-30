@@ -104,9 +104,9 @@ function handleCollapse(mode) {
 
 function logout() {
 	service.post('/api/auth/logout').then(() => {
-		resetUserInfo()
 		toLogin('admin')
 		ElMessage.success('退出登录成功')
+		resetUserInfo()
 	})
 }
 </script>

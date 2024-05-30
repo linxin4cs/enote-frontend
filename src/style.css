@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bold; /* 默认加粗 */
+	margin-top: 0.67em; /* 默认的上边距 */
+	margin-bottom: 0.67em; /* 默认的下边距 */
+	line-height: 1.2; /* 默认行高 */
+	color: black; /* 默认颜色，通常是黑色 */
+}
+
+h1 {
+	font-size: 2em; /* 默认大小，相对于基本字体大小 */
+}
+
+h2 {
+	font-size: 1.5em;
+}
+
+h3 {
+	font-size: 1.17em;
+}
+
+h4 {
+	font-size: 1.0em;
+}
+
+h5 {
+	font-size: 0.83em;
+}
+
+h6 {
+	font-size: 0.67em;
+}

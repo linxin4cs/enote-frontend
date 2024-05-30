@@ -1,9 +1,9 @@
 <script setup>
-import { reactive, ref, computed, onMounted } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ROLE_LIST, STATUS_LIST } from '@/utils/constant'
 import service from '@/utils/request'
-import { formatDate } from '@/utils/format'
+import { formatDateTimeToFull } from '@/utils/format'
 import getRules from '@/utils/validator'
 
 onMounted(() => {
@@ -93,6 +93,7 @@ onMounted(() => {
 // 	}
 // ]
 const tableRef = ref(null)
+const tableDataLoading = ref(true)
 const users = ref([])
 const totalItems = ref(1000)
 const removeIdList = ref([])
@@ -147,7 +148,7 @@ function handleCurrentChange(newPage) {
 	fetchUsers()
 }
 
-function fetchUsers() {
+async function fetchUsers() {
 	return service
 		.post('/api/admin/manage/user/list', {
 			data: {
@@ -169,14 +170,16 @@ function fetchUsers() {
 					email: item.email,
 					status: item.status,
 					role: item.role,
-					createdAt: formatDate(item.createdAt)
+					createdAt: formatDateTimeToFull(item.createdAt)
 				}
 			})
 
 			totalItems.value = res.data.totalItems
+			tableDataLoading.value = false
 		})
 		.catch((error) => {
 			ElMessage.error(error.data.message)
+			tableDataLoading.value = false
 		})
 }
 
@@ -189,7 +192,19 @@ function setDialogUserInfo(type, user) {
 
 	if (type === 'detail') {
 		dialogData.createdAt = user.createdAt
-		dialogData.storageUsage = '149.53 MB'
+
+		service
+			.post('/api/admin/manage/user/usage', {
+				data: {
+					userId: user.id
+				}
+			})
+			.then((res) => {
+				dialogData.storageUsage = res.data.total.parsedSize
+			})
+			.catch((error) => {
+				ElMessage.error(error.data.message)
+			})
 	}
 }
 
@@ -240,10 +255,12 @@ function saveDialogData() {
 }
 
 function addUser() {
+	const email = dialogData.email.trim()
+
 	service
 		.post('/api/admin/manage/user/new', {
 			data: {
-				email: dialogData.email,
+				email: email,
 				role: ROLE_LIST.indexOf(dialogData.role),
 				status: dialogData.status
 			}
@@ -259,12 +276,15 @@ function addUser() {
 }
 
 function editUser() {
+	const email = dialogData.email.trim()
+	const name = dialogData.name.trim()
+
 	service
 		.post('/api/admin/manage/user/edit', {
 			data: {
 				id: dialogData.id,
-				newEmail: dialogData.email,
-				newName: dialogData.name,
+				newEmail: email,
+				newName: name,
 				newRole: ROLE_LIST.indexOf(dialogData.role),
 				newStatus: dialogData.status
 			}
@@ -383,13 +403,18 @@ function deleteUsers(ids) {
 							type="danger"
 							@click="handleDeleteClick('selection')"
 							:disabled="removeIdList.length === 0"
-							>删除</el-button
-						>
+							>删除
+						</el-button>
 					</div>
 				</div>
 			</template>
 
-			<el-table :data="users" ref="tableRef" @selection-change="handleSelectionChange">
+			<el-table
+				:data="users"
+				v-loading="tableDataLoading"
+				ref="tableRef"
+				@selection-change="handleSelectionChange"
+			>
 				<el-table-column type="selection" width="28" align="center" />
 				<!--				<el-table-column key="id" label="id" align="left" prop="id" width="100">-->
 				<!--					<template #default="scope">-->
@@ -454,9 +479,9 @@ function deleteUsers(ids) {
 					:filter-method="(value, row) => row.role === value"
 				>
 					<template #default="scope">
-						<el-tag :type="scope.row.status === 0 ? 'info' : 'success'">{{
-							scope.row.status === 0 ? '禁用' : '启用'
-						}}</el-tag>
+						<el-tag :type="scope.row.status === 0 ? 'info' : 'success'"
+							>{{ scope.row.status === 0 ? '禁用' : '启用' }}
+						</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -470,18 +495,18 @@ function deleteUsers(ids) {
 				<el-table-column label="操作" width="138" align="center">
 					<template #default="scope">
 						<el-button type="success" size="small" link @click="openDialog('detail', scope.row)"
-							>详情</el-button
-						>
+							>详情
+						</el-button>
 						<el-button type="primary" link size="small" @click="openDialog('edit', scope.row)"
-							>编辑</el-button
-						>
+							>编辑
+						</el-button>
 						<el-button
 							type="danger"
 							link
 							size="small"
 							@click="handleDeleteClick('single', scope.row)"
-							>删除</el-button
-						>
+							>删除
+						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -531,9 +556,9 @@ function deleteUsers(ids) {
 
 				<el-form-item label="状态" prop="status" v-if="dialogSetting.type === 'edit'">
 					<el-radio-group v-model="dialogData.status">
-						<el-radio v-for="(item, index) in STATUS_LIST" :key="index" :value="index">{{
-							item
-						}}</el-radio>
+						<el-radio v-for="(item, index) in STATUS_LIST" :key="index" :value="index"
+							>{{ item }}
+						</el-radio>
 					</el-radio-group>
 				</el-form-item>
 			</el-form>
@@ -553,13 +578,15 @@ function deleteUsers(ids) {
 		<el-descriptions :column="2" border v-else-if="dialogSetting.type === 'detail'">
 			<el-descriptions-item label="id">{{ dialogData.id }}</el-descriptions-item>
 			<el-descriptions-item label="用户名"> {{ dialogData.name }}</el-descriptions-item>
-			<el-descriptions-item label="邮箱"> {{ dialogData.email }} </el-descriptions-item>
-			<el-descriptions-item label="角色"> {{ dialogData.role }} </el-descriptions-item>
+			<el-descriptions-item label="邮箱"> {{ dialogData.email }}</el-descriptions-item>
+			<el-descriptions-item label="角色"> {{ dialogData.role }}</el-descriptions-item>
 			<el-descriptions-item label="状态">
 				{{ STATUS_LIST[dialogData.status] }}
 			</el-descriptions-item>
-			<el-descriptions-item label="创建时间"> {{ dialogData.createdAt }} </el-descriptions-item>
-			<el-descriptions-item label="存储用量"> {{ dialogData.storageUsage }} </el-descriptions-item>
+			<el-descriptions-item label="创建时间"> {{ dialogData.createdAt }}</el-descriptions-item>
+			<el-descriptions-item label="存储用量" v-loading="dialogData.storageUsage === ''">
+				{{ dialogData.storageUsage }}
+			</el-descriptions-item>
 		</el-descriptions>
 
 		<!-- 弹窗底部操作按钮 -->
@@ -577,21 +604,26 @@ function deleteUsers(ids) {
 	.el-picker-panel__sidebar {
 		width: 100%;
 	}
+
 	.el-picker-panel {
 		width: 350px !important;
 	}
+
 	.el-picker-panel__content {
 		width: 100%;
 	}
+
 	.el-picker-panel__body {
 		margin-left: 0 !important;
 		display: flex;
 		flex-direction: column;
 		min-width: auto !important;
 	}
+
 	.el-picker-panel__sidebar {
 		position: relative;
 	}
+
 	.el-picker-panel__body-wrapper {
 		display: flex;
 		flex-direction: column;

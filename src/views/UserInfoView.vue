@@ -4,7 +4,7 @@ import { computed, reactive, ref } from 'vue'
 import defaultAvatar from '@/assets/default_avatar.png'
 import { EditPen, Lock, Message, User } from '@element-plus/icons-vue'
 import useStore, { setUserInfo } from '@/utils/store'
-import { formatDate } from '@/utils/format'
+import { formatDateTimeToFull } from '@/utils/format'
 import { PICTURE_TYPE_LIST, ROLE_LIST } from '@/utils/constant'
 import getRules from '@/utils/validator'
 import service from '@/utils/request'
@@ -140,17 +140,18 @@ function onValidateEmailForm(prop, isValid) {
 function handleSaveInfo() {
 	infoFormRef.value.validate((isValid) => {
 		if (isValid) {
+			const name = infoForm.name.trim()
 			service
 				.post('/api/user/edit/info', {
 					data: {
-						name: infoForm.name
+						name: name
 					}
 				})
 				.then(() => {
 					ElMessage.success('修改成功！')
 					setUserInfo({
 						...store.userInfo,
-						name: infoForm.name
+						name: name
 					})
 				})
 				.catch((error) => {
@@ -264,7 +265,7 @@ function handleSavePassword() {
 	<el-dialog
 		v-model="avatarUploadDialogVisible"
 		class="min-w-72 max-w-80"
-		:on-close="handleAvatarUploadDialogClose"
+		@closed="handleAvatarUploadDialogClose"
 	>
 		<template #header>
 			<span class="font-bold text-xl">上传头像</span>
@@ -328,7 +329,18 @@ function handleSavePassword() {
 			<template #header>
 				<div class="card-header flex justify-between items-center">
 					<span class="text-lg font-bold">个人信息</span>
+					<router-link
+						to="/admin"
+						target="_blank"
+						v-if="store.userInfo.role === 1 || store.userInfo.role === 2"
+					>
+						<span
+							class="text-xs border-[1px] text-[#2a9a5b] border-[#2a9a5b] rounded-sm p-1 shadow-md"
+							>{{ ROLE_LIST[store.userInfo.role] }}</span
+						>
+					</router-link>
 					<span
+						v-else
 						class="text-xs border-[1px] text-[#2a9a5b] border-[#2a9a5b] rounded-sm p-1 shadow-md"
 						>{{ ROLE_LIST[store.userInfo.role] }}</span
 					>
@@ -343,23 +355,23 @@ function handleSavePassword() {
 				<el-divider />
 				<div class="text-[#4a4b4eff]">
 					<div class="flex justify-between">
-						<span class="mr-12">ID</span>
+						<span class="mr-12 text-nowrap">ID</span>
 						<span class="text-right">{{ store.userInfo.id }}</span>
 					</div>
 					<el-divider />
 					<div class="flex justify-between">
-						<span class="mr-12">用户名</span>
-						<span>{{ store.userInfo.name }}</span>
+						<span class="mr-12 text-nowrap">用户名</span>
+						<span class="text-right">{{ store.userInfo.name }}</span>
 					</div>
 					<el-divider />
 					<div class="flex justify-between">
-						<span class="mr-12">邮箱</span>
-						<span>{{ store.userInfo.email }}</span>
+						<span class="mr-12 text-nowrap">邮箱</span>
+						<span class="text-right">{{ store.userInfo.email }}</span>
 					</div>
 					<el-divider />
 					<div class="flex justify-between">
-						<span class="mr-12">创建于</span>
-						<span>{{ formatDate(store.userInfo.createdAt) }}</span>
+						<span class="mr-12 text-nowrap">创建于</span>
+						<span class="text-right">{{ formatDateTimeToFull(store.userInfo.createdAt) }}</span>
 					</div>
 				</div>
 			</template>
@@ -545,6 +557,7 @@ function handleSavePassword() {
 								placeholder="新密码"
 								v-model="passwordForm.password"
 								type="password"
+								show-password
 							>
 								<template #prefix>
 									<el-icon>
@@ -560,6 +573,7 @@ function handleSavePassword() {
 								placeholder="重复新密码"
 								v-model="passwordForm.passwordAgain"
 								type="password"
+								show-password
 							>
 								<template #prefix>
 									<el-icon>

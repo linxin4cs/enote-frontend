@@ -41,7 +41,7 @@ const uploadRef = ref(null)
 
 // loading, success, fail
 const restoreStatus = ref('loading')
-const failReason = ref('')
+const failReason = ref('系统无足够空间用于存储备份文件！')
 
 const isAllServicesOnline = computed(() => {
 	return (
@@ -63,7 +63,7 @@ function handelRefreshService() {
 		serviceStatus.mongodb = 'online'
 		serviceStatus.redis = 'online'
 		serviceStatus.file = 'online'
-	}, 1000)
+	}, 1500)
 }
 
 function handleBackupFileExceed(files) {
@@ -77,7 +77,7 @@ function handleBackupFileExceed(files) {
 }
 
 const beforeBackupUpload = (rawFile) => {
-	if (rawFile.type !== '.zip') {
+	if (rawFile.name !== 'backup.zip') {
 		ElMessage.error('请上传直接从备份页面下载的备份文件')
 		return false
 	}
@@ -85,20 +85,27 @@ const beforeBackupUpload = (rawFile) => {
 	return true
 }
 
+const restoreTimer = ref(-1)
+
 function handleRestore() {
 	isShowBackupUpload.value = false
 	isConfirmBackupUploadInfo.value = false
 	activeStep.value = 1
 
-	setTimeout(() => {
-		restoreStatus.value = 'loading'
-	}, 2000)
+	if (restoreTimer.value !== -1) {
+		clearTimeout(restoreTimer.value)
+	}
+
+	restoreTimer.value = setTimeout(() => {
+		restoreStatus.value = 'fail'
+	}, 2500)
 }
 
 function handlePrevStep() {
 	restoreStatus.value = 'loading'
 	activeStep.value = 0
-	// TODO 发送取消指令
+
+	clearTimeout(restoreTimer.value)
 
 	handelRefreshService()
 }
@@ -114,7 +121,7 @@ function handleCancelRestore() {
 
 function handleShowFailReason() {
 	ElMessageBox.alert('This is a message', 'Title', {
-		title: '失败报错',
+		title: '失败信息',
 		autofocus: false,
 		message: failReason.value,
 		confirmButtonText: '已知晓'
@@ -147,7 +154,7 @@ handelRefreshService()
 			drag
 			:limit="1"
 			:on-exceed="handleBackupFileExceed"
-			:auto-upload="true"
+			:auto-upload="false"
 			ref="uploadRef"
 			accept=".zip"
 			:before-upload="beforeBackupUpload"

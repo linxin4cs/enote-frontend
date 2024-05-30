@@ -3,26 +3,180 @@ import useStore, { setUserInfo } from '@/utils/store'
 import { ElMessage } from 'element-plus'
 import service from '@/utils/request'
 
-export const AdminLayout = () => import('@/components/AdminLayout.vue')
+export const AdminLayout = () => import('@/components/layout/AdminLayout.vue')
+export const UserLayout = () => import('@/components/layout/UserLayout.vue')
 export const AuthView = () => import('@/views/AuthView.vue')
-export const LoginBlock = () => import('@/components/Auth/LoginBlock.vue')
-export const RegisterBlock = () => import('@/components/Auth/RegisterBlock.vue')
-export const ForgetBlock = () => import('@/components/Auth/ForgetBlock.vue')
+export const LoginBlock = () => import('@/components/auth/LoginBlock.vue')
+export const RegisterBlock = () => import('@/components/auth/RegisterBlock.vue')
+export const ForgetBlock = () => import('@/components/auth/ForgetBlock.vue')
+export const AdminDashboardView = () => import('@/views/admin/AdminDashboardView.vue')
+export const UserIconView = () => import('@/views/user/UserIconView.vue')
 
 // 静态路由
 export const constantRoutes = [
 	{
 		path: '/',
 		name: 'UserLayout',
+		component: UserLayout,
 		meta: { title: 'UserLayout', hidden: true },
-		redirect: '/userinfo',
+		redirect: '/latest',
 		children: [
+			{
+				path: 'latest',
+				name: 'UserLatestIconView',
+				component: UserIconView,
+				meta: {
+					title: 'UserLatestIconView',
+					hidden: true
+				},
+				props: {
+					page: 'latest'
+				}
+			},
+			{
+				path: 'latest/note/:noteId',
+				name: 'UserLatestNoteViewContent',
+				component: () => import('@/views/user/UserNoteView.vue'),
+				meta: {
+					title: 'UserLatestNoteViewContent',
+					hidden: true
+				}
+			},
+			{
+				path: 'folder',
+				name: 'UserFolderIconView',
+				component: UserIconView,
+				meta: {
+					title: 'UserFolderIconView',
+					hidden: true
+				},
+				props: {
+					page: 'folder'
+				},
+				children: [
+					{
+						path: ':folderId',
+						name: 'UserFolderIconView',
+						component: UserIconView,
+						meta: {
+							title: 'UserFolderIconView',
+							hidden: true
+						},
+						props: {
+							page: 'folder'
+						}
+					}
+				]
+			},
+			{
+				path: 'folder/note/:noteId',
+				name: 'UserFolderNoteViewContent',
+				component: () => import('@/views/user/UserNoteView.vue'),
+				meta: {
+					title: 'UserFolderNoteViewContent',
+					hidden: true
+				}
+			},
+			{
+				path: 'folder/:folderId/note/:noteId',
+				name: 'UserSubFolderNoteViewContent',
+				component: () => import('@/views/user/UserNoteView.vue'),
+				meta: {
+					title: 'UserSubFolderNoteViewContent',
+					hidden: true
+				}
+			},
+			{
+				path: 'star',
+				name: 'UserStarIconView',
+				component: UserIconView,
+				meta: {
+					title: 'UserStarIconView',
+					hidden: true
+				},
+				props: {
+					page: 'star'
+				},
+				children: [
+					{
+						path: 'note',
+						name: 'UserStarNoteView',
+
+						meta: {
+							title: 'UserStarNoteView',
+							hidden: true
+						}
+					}
+				]
+			},
+			{
+				path: 'star/note/:noteId',
+				name: 'UserStarNoteViewContent',
+				component: () => import('@/views/user/UserNoteView.vue'),
+				meta: {
+					title: 'UserStarNoteViewContent',
+					hidden: true
+				}
+			},
+			{
+				path: 'tag',
+				name: 'UserTagIconView',
+				component: UserIconView,
+				meta: {
+					title: 'UserTagIconView',
+					hidden: true
+				},
+				props: {
+					page: 'tag'
+				},
+				children: [
+					{
+						path: ':tagId',
+						name: 'UserTagIconView',
+						component: UserIconView,
+						meta: {
+							title: 'UserTagIconView',
+							hidden: true
+						},
+						props: {
+							page: 'tag'
+						}
+					}
+				]
+			},
+			{
+				path: 'tag/:tagId/note/:noteId',
+				name: 'UserTagNoteViewContent',
+				component: () => import('@/views/user/UserNoteView.vue'),
+				meta: {
+					title: 'UserTagNoteViewContent',
+					hidden: true
+				}
+			},
 			{
 				path: 'userinfo',
 				name: 'UserInfoView',
 				component: () => import('@/views/UserInfoView.vue'),
 				meta: {
 					title: 'UserInfoView',
+					hidden: true
+				}
+			},
+			{
+				path: 'statistics',
+				name: 'UserStatisticsView',
+				component: () => import('@/views/user/UserStatisticsView.vue'),
+				meta: {
+					title: 'UserStatisticsView',
+					hidden: true
+				}
+			},
+			{
+				path: 'settings',
+				name: 'UserSettingsView',
+				component: () => import('@/views/user/UserSettingsView.vue'),
+				meta: {
+					title: 'UserSettingsView',
 					hidden: true
 				}
 			}
@@ -38,7 +192,7 @@ export const constantRoutes = [
 			{
 				path: 'dashboard',
 				name: 'AdminDashboardView',
-				component: () => import('@/views/admin/AdminDashboardView.vue'),
+				component: AdminDashboardView,
 				meta: {
 					title: 'AdminDashboardView'
 				}
@@ -273,7 +427,7 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach(() => {
-	console.log(router.currentRoute.value.path)
+	// console.log(router.currentRoute.value.path)
 })
 
 export default router
