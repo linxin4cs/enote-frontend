@@ -12,15 +12,17 @@
 ![PC User View](./assets/PC%20端用户界面.png)
 
 **移动端用户界面：**  
-![Mobile User View](./assets/移动端用户界面.png)
+<img src="./assets/移动端用户界面.png" style="width: 30%"></img>
 
 **PC 端管理后台：**  
 ![PC Admin View](./assets/PC%20端管理后台.png)
 
 **移动端管理后台：**  
-![Mobile Admin View](./assets/移动端管理后台.png)
+<img src="./assets/移动端管理后台.png" style="width: 30%"></img>
 
 **登录 / 注册界面：**  
+<img src="./assets/登陆界面.png" style="width: 30%"></img>
+
 ![Login](./assets/登陆界面.png)
 ![Register](./assets/注册界面.png)
 
