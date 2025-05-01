@@ -177,4 +177,4 @@ enote-frontend/
 
 此前端应用需与对应的 **云笔记平台后端服务** 进行交互。请确保后端服务已运行，并在 `.env.development` 中正确配置了 `VITE_API_BASE_URL`。
 
-后端仓库地址：[https://github.com/linxin4cs/enote-backend](ENote-Backend)
+后端仓库地址：[ENote-Backend](https://github.com/linxin4cs/enote-backend)
