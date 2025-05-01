@@ -22,9 +22,7 @@
 
 **登录 / 注册界面：**  
 <img src="./assets/登陆界面.png" style="width: 30%"></img>
-
-![Login](./assets/登陆界面.png)
-![Register](./assets/注册界面.png)
+<img src="./assets/注册界面.png" style="width: 30%"></img>
 
 ## 主要功能 (Features)
 
