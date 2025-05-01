@@ -1,179 +1,180 @@
 # ENote-Frontend
+English | [中文](./README.zh-CN.md) 
 
-本仓库包含云笔记平台的前端源代码，作为本科毕业设计的一部分开发。该平台为用户提供一个现代化、响应式的界面，用于跨设备创建、管理和访问笔记。
+This repository contains the frontend source code for the Cloud Note-Taking Platform, developed as part of an undergraduate thesis project. The platform provides users with a modern, responsive interface for creating, managing, and accessing notes across devices.
 
-## 项目简介
+## Project Overview
 
-本前端应用基于 B/S 架构和前后端分离模式开发，旨在为用户提供一个功能丰富、界面简洁、体验良好的云笔记服务。主要运用了 Vue 3 技术栈，实现了响应式布局，适配 PC 和移动端浏览器。
+This frontend application is built using the B/S architecture and a decoupled frontend-backend model. It aims to deliver a feature-rich, clean, and user-friendly cloud note-taking service. The application is built with the Vue 3 technology stack and implements a responsive layout compatible with both desktop and mobile browsers.
 
-## 截屏预览
+## Screenshots
 
-**PC 端用户界面：**  
+**Desktop User Interface:**  
 ![PC User View](./assets/PC%20端用户界面.png)
 
-**移动端用户界面：**  
+**Mobile User Interface:**  
 <img src="./assets/移动端用户界面.png" style="width: 30%"></img>
 
-**PC 端管理后台：**  
+**Desktop Admin Panel:**  
 ![PC Admin View](./assets/PC%20端管理后台.png)
 
-**移动端管理后台：**  
+**Mobile Admin Panel:**  
 <img src="./assets/移动端管理后台.png" style="width: 30%"></img>
 
-**登录 / 注册界面：**  
+**Login / Registration Screens:**  
 <img src="./assets/登陆界面.png" style="width: 30%"></img>
 <img src="./assets/注册界面.png" style="width: 30%"></img>
 
-## 主要功能 (Features)
+## Features
 
-### 用户认证
-- 用户注册（邮箱验证）
-- 用户登录
-- 忘记密码（邮箱验证重置）
-- “记住我”自动登录（持久化令牌）
-- 权限管理（普通用户、普通管理员、超级管理员）
-- 用户状态管理（启用 / 禁用）
+### User Authentication
+- User registration (with email verification)
+- User login
+- Forgot password (reset via email verification)
+- "Remember me" auto-login (persistent tokens)
+- Permission management (Regular User, Admin, Super Admin)
+- User status management (Enable / Disable)
 
-### 笔记管理
-- 创建 / 删除 / 重命名笔记
-- 富文本编辑（支持文本、图片、视频、音频嵌入 - 使用 WangEditor 5）
-- 内容即时 / 自动保存
-- 笔记列表展示（摘要、更新时间）
-- 关键字检索（模糊匹配，大小写不敏感）
-- 笔记大纲查看
-- 收藏 / 取消收藏
-- 移动笔记至不同文件夹
-- 为笔记添加 / 删除标签
+### Note Management
+- Create / Delete / Rename notes
+- Rich text editing (supports text, images, videos, audio – using WangEditor 5)
+- Real-time / Auto-save content
+- Note list view (summary, last updated time)
+- Keyword search (fuzzy matching, case-insensitive)
+- View note outline
+- Favorite / Unfavorite notes
+- Move notes between folders
+- Add / Remove tags for notes
 
-### 文件夹与标签管理
-- 创建 / 删除 / 重命名文件夹和标签
-- 移动文件夹
-- 按文件夹、标签、收藏状态、关键字筛选笔记
-- 右键菜单操作（笔记、文件夹、标签）— 使用 Vue3 Context Menu 实现
+### Folder & Tag Management
+- Create / Delete / Rename folders and tags
+- Move folders
+- Filter notes by folder, tag, favorite status, and keywords
+- Context menu actions (for notes, folders, and tags) – powered by Vue3 Context Menu
 
-### 文件管理
-- 上传用户头像
-- 上传 / 访问 / 删除笔记中的图片、视频、音频  
-  _（删除操作关联笔记内容变更）_
+### File Management
+- Upload user avatars
+- Upload / Access / Delete images, videos, and audio in notes  
+  _(Deletions are synchronized with note content)_
 
-### 用户中心
-- 查看 / 修改个人信息（用户名、邮箱、密码、头像）  
-  _（敏感操作需邮箱验证）_
-- 删除账号（邮箱验证）
+### User Center
+- View / Edit personal information (username, email, password, avatar)  
+  _(Sensitive actions require email verification)_
+- Delete account (email verification required)
 
-### 数据分析（用户端）
-- 统计个人笔记、文件夹、收藏、标签、多媒体文件数量
-- 可视化显示个人存储用量（笔记与多媒体）
+### Data Analytics (User Side)
+- Statistics on personal notes, folders, favorites, tags, and multimedia file counts
+- Visual representation of personal storage usage (notes and media)
 
-### 数据分析（管理端）
-- 查看平台用户总数、日新增、周新增、日活跃、周活跃及趋势
-- 查看平台笔记总数、日新增、周新增、日活跃、周活跃及趋势
-- 查看平台文件（图片 / 视频 / 音频）总数、存储用量及趋势
-- 图表展示使用 AntV G2 实现
+### Data Analytics (Admin Side)
+- View total users, daily/weekly new users, daily/weekly active users with trends
+- View total notes, daily/weekly new notes, daily/weekly active notes with trends
+- View total media files (images / videos / audio), storage usage and trends
+- Charts built with AntV G2
 
-### 管理后台
-- 用户管理（创建、查询、编辑、删除）  
-  _（管理员不可编辑 / 删除权限等于或高于自身的用户）_
-- 平台数据维护（备份 / 恢复 - 界面模拟）
+### Admin Panel
+- User management (Create, Read, Update, Delete)  
+  _(Admins cannot edit/delete users with equal or higher permission levels)_
+- Platform data maintenance (Backup / Restore – UI simulation)
 
-### 其他
-- 响应式布局（同时适配 PC 与移动端）
-- 简洁美观的 UI 界面（基于 Element Plus 和 TailwindCSS）
+### Miscellaneous
+- Responsive layout (adapts to both desktop and mobile)
+- Clean and aesthetic UI (based on Element Plus and TailwindCSS)
 
-## 技术栈 (Technology Stack)
+## Technology Stack
 
-- **框架：** Vue.js 3（Composition API）
-- **构建工具：** Vite
-- **UI 库：** Element Plus
-- **路由：** Vue Router
-- **状态管理：** Pinia
-- **HTTP 客户端：** Axios
-- **富文本编辑器：** WangEditor 5
-- **数据可视化：** AntV G2
-- **右键菜单：** Vue3 Context Menu
-- **CSS 框架：** TailwindCSS
-- **核心语言：** JavaScript (ES6+) / 可选 TypeScript
-- **包管理工具：** NPM / Yarn / PNPM
+- **Framework:** Vue.js 3 (Composition API)
+- **Build Tool:** Vite
+- **UI Library:** Element Plus
+- **Router:** Vue Router
+- **State Management:** Pinia
+- **HTTP Client:** Axios
+- **Rich Text Editor:** WangEditor 5
+- **Data Visualization:** AntV G2
+- **Context Menu:** Vue3 Context Menu
+- **CSS Framework:** TailwindCSS
+- **Core Language:** JavaScript (ES6+) / optionally TypeScript
+- **Package Manager:** NPM / Yarn / PNPM
 
-## 项目结构 (Project Structure)
+## Project Structure
 
 ```
 enote-frontend/
 ├── public/
-│   └── favicon.ico               # 网站图标
+│   └── favicon.ico               # Website icon
 ├── src/
-│   ├── assets/                   # 静态资源（图片、字体等）
-│   ├── components/              # 可复用组件（按 admin, auth, layout, user 分类）
-│   ├── router/                  # 路由配置（router.js）
-│   ├── store/                   # 状态管理（Pinia store.js）
-│   ├── styles/                  # 全局样式（style.css）
-│   ├── utils/                   # 工具函数（常量、格式化、封装请求、校验器等）
-│   ├── views/                   # 页面组件
-│   ├── App.vue                  # 根组件
-│   └── main.js                  # 应用入口
-├── .env.development             # 开发环境变量（示例）
-├── index.html                   # HTML 入口
-├── package.json                 # 项目依赖和脚本
-├── vite.config.js               # Vite 配置文件
-└── tailwind.config.js           # TailwindCSS 配置
+│   ├── assets/                   # Static assets (images, fonts, etc.)
+│   ├── components/              # Reusable components (grouped by admin, auth, layout, user)
+│   ├── router/                  # Route configuration (router.js)
+│   ├── store/                   # State management (Pinia store.js)
+│   ├── styles/                  # Global styles (style.css)
+│   ├── utils/                   # Utility functions (constants, formatters, request wrappers, validators, etc.)
+│   ├── views/                   # Page components
+│   ├── App.vue                  # Root component
+│   └── main.js                  # Application entry point
+├── .env.development             # Environment variables for development (example)
+├── index.html                   # HTML entry point
+├── package.json                 # Project dependencies and scripts
+├── vite.config.js               # Vite config file
+└── tailwind.config.js           # TailwindCSS config
 ```
 
-## 本地运行 (Getting Started)
+## Getting Started
 
-### 先决条件
+### Prerequisites
 
-- Node.js (推荐 >=16.x)
-- NPM 或 Yarn 或 PNPM
+- Node.js (recommended >=16.x)
+- NPM, Yarn, or PNPM
 
-### 安装与运行
+### Installation and Run
 
-1. **克隆仓库**
+1. **Clone the repository**
     ```bash
     git clone git@github.com:linxin4cs/enote-frontend.git
     cd enote-frontend
     ```
 
-2. **安装依赖**
+2. **Install dependencies**
     ```bash
     npm install
-    # 或
+    # or
     yarn install
-    # 或
+    # or
     pnpm install
     ```
 
-3. **配置环境变量**
-    在项目根目录下创建 `.env.development` 文件，添加以下内容：
+3. **Configure environment variables**
+    Create a `.env.development` file in the project root with the following content:
 
     ```env
     VITE_API_BASE_URL=http://localhost:8080/api
     ```
-    _（请根据你的后端地址和端口进行修改）_
+    _(Modify according to your backend address and port)_
 
-4. **运行开发服务器**
+4. **Run the development server**
     ```bash
     npm run dev
-    # 或
+    # or
     yarn dev
-    # 或
+    # or
     pnpm dev
     ```
 
-    应用将在 `http://localhost:5173`（或 Vite 指定的端口）访问。
+    The app will be available at `http://localhost:5173` (or the port specified by Vite).
 
-5. **构建生产版本**
+5. **Build for production**
     ```bash
     npm run build
-    # 或
+    # or
     yarn build
-    # 或
+    # or
     pnpm build
     ```
 
-    构建结果将在 `dist/` 目录下。
+    The build output will be located in the `dist/` directory.
 
-## API 交互 (API Interaction)
+## API Interaction
 
-此前端应用需与对应的 **云笔记平台后端服务** 进行交互。请确保后端服务已运行，并在 `.env.development` 中正确配置了 `VITE_API_BASE_URL`。
+This frontend application must interact with the corresponding **Cloud Note-Taking Platform Backend Service**. Ensure the backend service is running and that `VITE_API_BASE_URL` in `.env.development` is correctly configured.
 
-后端仓库地址：https://github.com/linxin4cs/enote-backend
+Backend repository: [https://github.com/linxin4cs/enote-backend](ENote-Backend)
