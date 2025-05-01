@@ -177,4 +177,4 @@ enote-frontend/
 
 This frontend application must interact with the corresponding **Cloud Note-Taking Platform Backend Service**. Ensure the backend service is running and that `VITE_API_BASE_URL` in `.env.development` is correctly configured.
 
-Backend repository: [https://github.com/linxin4cs/enote-backend](ENote-Backend)
+Backend repository: [ENote-Backend](https://github.com/linxin4cs/enote-backend)
