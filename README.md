@@ -37,7 +37,7 @@ This frontend application is built using the B/S architecture and a decoupled fr
 
 ### Note Management
 - Create / Delete / Rename notes
-- Rich text editing (supports text, images, videos, audio – using WangEditor 5)
+- Rich text editing (supports text, images, videos, audio)
 - Real-time / Auto-save content
 - Note list view (summary, last updated time)
 - Keyword search (fuzzy matching, case-insensitive)
@@ -50,7 +50,7 @@ This frontend application is built using the B/S architecture and a decoupled fr
 - Create / Delete / Rename folders and tags
 - Move folders
 - Filter notes by folder, tag, favorite status, and keywords
-- Context menu actions (for notes, folders, and tags) – powered by Vue3 Context Menu
+- Context menu actions (for notes, folders, and tags)
 
 ### File Management
 - Upload user avatars
@@ -70,7 +70,7 @@ This frontend application is built using the B/S architecture and a decoupled fr
 - View total users, daily/weekly new users, daily/weekly active users with trends
 - View total notes, daily/weekly new notes, daily/weekly active notes with trends
 - View total media files (images / videos / audio), storage usage and trends
-- Charts built with AntV G2
+- Charts
 
 ### Admin Panel
 - User management (Create, Read, Update, Delete)  
@@ -79,7 +79,7 @@ This frontend application is built using the B/S architecture and a decoupled fr
 
 ### Miscellaneous
 - Responsive layout (adapts to both desktop and mobile)
-- Clean and aesthetic UI (based on Element Plus and TailwindCSS)
+- Clean and aesthetic UI
 
 ## Technology Stack
 
@@ -93,7 +93,7 @@ This frontend application is built using the B/S architecture and a decoupled fr
 - **Data Visualization:** AntV G2
 - **Context Menu:** Vue3 Context Menu
 - **CSS Framework:** TailwindCSS
-- **Core Language:** JavaScript (ES6+) / optionally TypeScript
+- **Core Language:** JavaScript
 - **Package Manager:** NPM / Yarn / PNPM
 
 ## Project Structure
